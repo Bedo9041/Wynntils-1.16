@@ -17,10 +17,10 @@ import com.wynntils.modules.map.instances.WaypointProfile;
 import com.wynntils.modules.map.instances.WaypointProfile.WaypointType;
 import com.wynntils.modules.map.overlays.objects.MapWaypointIcon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.GuiLabel;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class WaypointCreationMenu extends UI {
         boolean returning = state != null;  // true if reusing gui (i.e., returning from another gui)
 
         if (!returning) {
-            UIElements.add(colorWheel = new UIEColorWheel(0.5f, 0.5f, 0, 9, 20, 20, true, this::setColor, this));
+            UIElements.add(colorWheel = new UIEColorWheel(0.5f, 0.5f, 0, 9, 20, 20, true, this::withColor, this));
         }
 
         WaypointProfile wp = returning ? wpIcon.getWaypointProfile() : this.wp;
@@ -141,7 +141,7 @@ public class WaypointCreationMenu extends UI {
         } else {
             state = new WaypointCreationMenuState();
             state.putState(this);
-            colorWheel.setColor(color);
+            colorWheel.withColor(color);
         }
 
         isAllValidInformation();
@@ -197,7 +197,7 @@ public class WaypointCreationMenu extends UI {
         return c == null ? CommonColors.WHITE : c;
     }
 
-    private void setColor(CustomColor color) {
+    private void withColor(CustomColor color) {
         setWpIcon(getWaypointType(), getZoomNeeded(), color == null ? CommonColors.WHITE : color);
     }
 
@@ -248,7 +248,7 @@ public class WaypointCreationMenu extends UI {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == GLFW.GLFW_KEY_TAB) {
             Utils.tab(
-                Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1,
+                Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1,
                 nameField, xCoordField, zCoordField, yCoordField, colorWheel.textBox.textField
             );
             return;
@@ -277,9 +277,9 @@ public class WaypointCreationMenu extends UI {
                 MapConfig.Waypoints.INSTANCE.waypoints.add(newWp);
             }
             MapConfig.Waypoints.INSTANCE.saveSettings(MapModule.getModule());
-            Utils.displayGuiScreen(previousGui == null ? new MainWorldMapUI() : previousGui);
+            Utils.setScreen(previousGui == null ? new MainWorldMapUI() : previousGui);
         } else if (button == cancelButton) {
-            Utils.displayGuiScreen(previousGui == null ? new MainWorldMapUI() : previousGui);
+            Utils.setScreen(previousGui == null ? new MainWorldMapUI() : previousGui);
         } else if (button == waypointTypeNext) {
             setWaypointType(WaypointType.values()[(getWaypointType().ordinal() + 1) % WaypointType.values().length]);
         } else if (button == waypointTypeBack) {

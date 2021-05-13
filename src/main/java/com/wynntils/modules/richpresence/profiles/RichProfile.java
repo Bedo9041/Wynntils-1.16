@@ -112,14 +112,14 @@ public class RichProfile {
             overlayEvents.on_toggle = (callbackData, closedAsByte) -> {
                 boolean opened = closedAsByte == 0;
                 if (opened && ModCore.mc().screen == null) {
-                    ModCore.mc().displayGuiScreen(new Screen() {
+                    ModCore.mc().setScreen(new Screen() {
                         public void onGuiClosed() {
                             isBlankGuiOpen = false;
                         }
                     });
                     isBlankGuiOpen = true;
                 } else if (!opened && isBlankGuiOpen) {
-                    ModCore.mc().displayGuiScreen(null);
+                    ModCore.mc().setScreen(null);
                 }
             };
 

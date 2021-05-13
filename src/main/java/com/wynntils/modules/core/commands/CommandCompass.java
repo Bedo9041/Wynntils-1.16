@@ -85,7 +85,7 @@ public class CommandCompass extends CommandBase implements IClientCommand {
                 CompassManager.reset();
 
                 StringTextComponent text = new StringTextComponent("The beacon and icon of your desired coordinates have been cleared.");
-                text.getStyle().setColor(TextFormatting.GREEN);
+                text.getStyle().withColor(TextFormatting.GREEN);
                 sender.sendMessage(text);
                 return;
             }
@@ -138,7 +138,7 @@ public class CommandCompass extends CommandBase implements IClientCommand {
                 default:
                     if (newPos[1] == 0) {
                         StringTextComponent text = new StringTextComponent("That wasn't supposed to happen!");
-                        text.getStyle().setColor(TextFormatting.DARK_RED);
+                        text.getStyle().withColor(TextFormatting.DARK_RED);
                         sender.sendMessage(text);
                     }
                     break;
@@ -181,14 +181,14 @@ public class CommandCompass extends CommandBase implements IClientCommand {
 
             dir = dir.substring(0, 1).toUpperCase() + dir.substring(1);
             StringTextComponent text = new StringTextComponent("");
-            text.getStyle().setColor(TextFormatting.GREEN);
-            text.appendText("Compass is now pointing towards ");
+            text.getStyle().withColor(TextFormatting.GREEN);
+            text.append("Compass is now pointing towards ");
 
             StringTextComponent directionText = new StringTextComponent(dir);
-            directionText.getStyle().setColor(TextFormatting.DARK_GREEN);
-            text.appendSibling(directionText);
+            directionText.getStyle().withColor(TextFormatting.DARK_GREEN);
+            text.append(directionText);
 
-            text.appendText(".");
+            text.append(".");
             sender.sendMessage(text);
             return;
         }
@@ -202,8 +202,8 @@ public class CommandCompass extends CommandBase implements IClientCommand {
 
             if (args.length >= 2 && args[1].equalsIgnoreCase("location")) {
                 // Use current location instead of compass
-                x = Minecraft.getInstance().player.posX;
-                z = Minecraft.getInstance().player.posZ;
+                x = Minecraft.getInstance().player.getX();
+                z = Minecraft.getInstance().player.getZ();
                 type = "location";
                 recipientIndex = 2;
             } else {
@@ -249,26 +249,26 @@ public class CommandCompass extends CommandBase implements IClientCommand {
             }
 
             try {
-                int x = getSingleCoordinate(xStr, (int) Minecraft.getInstance().player.posX);
-                int z = getSingleCoordinate(zStr, (int) Minecraft.getInstance().player.posZ);
+                int x = getSingleCoordinate(xStr, (int) Minecraft.getInstance().player.getX());
+                int z = getSingleCoordinate(zStr, (int) Minecraft.getInstance().player.getZ());
 
                 CompassManager.setCompassLocation(new Location(x, 0, z));
 
                 StringTextComponent text = new StringTextComponent("");
-                text.getStyle().setColor(TextFormatting.GREEN);
-                text.appendText("Compass is now pointing towards (");
+                text.getStyle().withColor(TextFormatting.GREEN);
+                text.append("Compass is now pointing towards (");
 
                 StringTextComponent xCoordinateText = new StringTextComponent(Integer.toString(x));
-                xCoordinateText.getStyle().setColor(TextFormatting.DARK_GREEN);
-                text.appendSibling(xCoordinateText);
+                xCoordinateText.getStyle().withColor(TextFormatting.DARK_GREEN);
+                text.append(xCoordinateText);
 
-                text.appendText(", ");
+                text.append(", ");
 
                 StringTextComponent zCoordinateText = new StringTextComponent(Integer.toString(z));
-                zCoordinateText.getStyle().setColor(TextFormatting.DARK_GREEN);
-                text.appendSibling(zCoordinateText);
+                zCoordinateText.getStyle().withColor(TextFormatting.DARK_GREEN);
+                text.append(zCoordinateText);
 
-                text.appendText(").");
+                text.append(").");
                 sender.sendMessage(text);
 
                 return;

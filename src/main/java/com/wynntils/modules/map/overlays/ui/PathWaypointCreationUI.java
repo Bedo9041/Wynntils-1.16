@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.map.overlays.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.enums.MouseButton;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.ui.elements.UIEColorWheel;
@@ -15,10 +16,9 @@ import com.wynntils.modules.map.instances.PathWaypointProfile;
 import com.wynntils.modules.map.instances.PathWaypointProfile.PathPoint;
 import com.wynntils.modules.map.overlays.objects.MapPathWaypointIcon;
 import com.wynntils.modules.map.overlays.objects.WorldMapIcon;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiTextField;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import org.lwjgl.glfw.GLFW;
 
@@ -71,10 +71,10 @@ public class PathWaypointCreationUI extends WorldMapUI {
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         buttonList.clear();
 
-        super.initGui();
+        super.init();
 
         buttonList.add(saveButton = new Button(1, 22, 23, 60, 18, "Save"));
         buttonList.add(cancelButton = new Button(3, 22, 46, 60, 18, "Cancel"));
@@ -90,8 +90,8 @@ public class PathWaypointCreationUI extends WorldMapUI {
         nameFieldLabel.addLine("Name");
 
         if (!returning) {
-            colorWheel = new UIEColorWheel(1, 0, -168, 46, 20, 20, true, profile::setColor, this);
-            colorWheel.setColor(profile.getColor());
+            colorWheel = new UIEColorWheel(1, 0, -168, 46, 20, 20, true, profile::withColor, this);
+            colorWheel.withColor(profile.getColor());
         }
 
         buttonList.add(hiddenBox = new GuiCheckBox(5, this.width - 143,  72, "Hidden", hidden));  // TODO: check align
@@ -254,7 +254,7 @@ public class PathWaypointCreationUI extends WorldMapUI {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == GLFW.GLFW_KEY_TAB) {
             Utils.tab(
-                Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1,
+                Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1,
                 nameField, colorWheel.textBox.textField
             );
             return;
@@ -317,11 +317,11 @@ public class PathWaypointCreationUI extends WorldMapUI {
                 MapConfig.Waypoints.INSTANCE.pathWaypoints.add(profile);
             }
             MapConfig.Waypoints.INSTANCE.saveSettings(MapModule.getModule());
-            mc.displayGuiScreen(new PathWaypointOverwiewUI());
+            mc.setScreen(new PathWaypointOverwiewUI());
         } else if (btn == cancelButton) {
-            mc.displayGuiScreen(new PathWaypointOverwiewUI());
+            mc.setScreen(new PathWaypointOverwiewUI());
         } else if (btn == resetButton) {
-            mc.displayGuiScreen(new PathWaypointCreationUI(originalProfile));
+            mc.setScreen(new PathWaypointCreationUI(originalProfile));
         } else if (btn == clearButton) {
             int sz;
             while ((sz = profile.size()) != 0) profile.removePoint(sz - 1);

@@ -15,10 +15,10 @@ import com.wynntils.modules.chat.configs.ChatConfig;
 import com.wynntils.modules.chat.overlays.ChatOverlay;
 import com.wynntils.modules.core.managers.CompassManager;
 import com.wynntils.modules.map.overlays.ui.MainWorldMapUI;
-import net.minecraft.client.Minecraft;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -49,7 +49,7 @@ public class HeldItemChatManager {
         Minecraft mc = Minecraft.getInstance();
         if (
             !ChatConfig.INSTANCE.heldItemChat ||
-            mc.player == null || mc.world == null ||
+            mc.player == null || mc.level == null ||
             mc.player.inventory.items.get(6).getItem() != Items.COMPASS ||
             mc.player.inventory.items.get(7).getItem() != Items.WRITTEN_BOOK ||
             mc.player.inventory.items.get(8).getItem() != Items.NETHER_STAR &&
@@ -81,11 +81,11 @@ public class HeldItemChatManager {
         public void run() {
             Location compass = CompassManager.getCompassLocation();
             if (compass == null) {
-                Utils.displayGuiScreen(new MainWorldMapUI());
+                Utils.setScreen(new MainWorldMapUI());
                 return;
             }
 
-            Utils.displayGuiScreen(new MainWorldMapUI((float) compass.getX(), (float) compass.getZ()));
+            Utils.setScreen(new MainWorldMapUI((float) compass.getX(), (float) compass.getZ()));
         }
     }
 
@@ -93,39 +93,39 @@ public class HeldItemChatManager {
         ITextComponent base = new StringTextComponent("Compass Beacon");
         ITextComponent text = base;
 
-        text.getStyle().setColor(TextFormatting.RED);
+        text.getStyle().withColor(TextFormatting.RED);
         text.getStyle().setBold(true);
 
         text = add(text, new StringTextComponent(" "));
-        text.getStyle().setColor(TextFormatting.WHITE);
+        text.getStyle().withColor(TextFormatting.WHITE);
         text.getStyle().setBold(false);
 
         Location compass = CompassManager.getCompassLocation();
         if (compass != null) {
             ITextComponent clearBeacon = add(text, new StringTextComponent("[Clear beacon]"));
-            clearBeacon.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to clear the compass beacon")));
-            clearBeacon.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/compass clear"));
+            clearBeacon.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to clear the compass beacon")));
+            clearBeacon.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/compass clear"));
 
             text = add(text, new StringTextComponent(" "));
         }
 
         add(text, getCancelComponent());
         text = add(text, new StringTextComponent("\n"));
-        text.getStyle().setColor(TextFormatting.WHITE);
+        text.getStyle().withColor(TextFormatting.WHITE);
 
         if (compass == null) {
             ITextComponent suggestCompass = add(text, new StringTextComponent("Compass beacon not set"));
-            suggestCompass.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do /compass or middle click on map to set compass")));
-            suggestCompass.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/compass "));
-            suggestCompass.getStyle().setColor(TextFormatting.GRAY);
+            suggestCompass.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do /compass or middle click on map to set compass")));
+            suggestCompass.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/compass "));
+            suggestCompass.getStyle().withColor(TextFormatting.GRAY);
             suggestCompass.getStyle().setItalic(true);
             return base;
         }
 
         double compassX = compass.getX();
         double compassZ = compass.getZ();
-        double playerX = Minecraft.getInstance().player.posX;
-        double playerZ = Minecraft.getInstance().player.posZ;
+        double playerX = Minecraft.getInstance().player.getX();
+        double playerZ = Minecraft.getInstance().player.getZ();
 
         int distance = MathHelper.floor(MathHelper.sqrt((compassX - playerX) * (compassX - playerX) + (compassZ - playerZ) * (compassZ - playerZ)));
 
@@ -134,8 +134,8 @@ public class HeldItemChatManager {
             MathHelper.floor(compassX), MathHelper.floor(compassZ), distance
         )));
 
-        text.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to show on main map")));
-        text.getStyle().setClickEvent(TextAction.getStaticEvent(OnOpenMapAtCompassClick.class));
+        text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to show on main map")));
+        text.getStyle().withClickEvent(TextAction.getStaticEvent(OnOpenMapAtCompassClick.class));
 
         return base;
     }
@@ -151,11 +151,11 @@ public class HeldItemChatManager {
         ITextComponent base = new StringTextComponent("Soul points");
         ITextComponent text = base;
 
-        text.getStyle().setColor(TextFormatting.AQUA);
+        text.getStyle().withColor(TextFormatting.AQUA);
         text.getStyle().setBold(true);
 
         text = add(text, new StringTextComponent(" "));
-        text.getStyle().setColor(TextFormatting.WHITE);
+        text.getStyle().withColor(TextFormatting.WHITE);
         text.getStyle().setBold(false);
 
         add(text, getCancelComponent());
@@ -199,8 +199,8 @@ public class HeldItemChatManager {
 
     private static ITextComponent getCancelComponent() {
         ITextComponent msg = new StringTextComponent("[x]");
-        msg.getStyle().setColor(TextFormatting.DARK_RED);
-        msg.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do not show this text")));
+        msg.getStyle().withColor(TextFormatting.DARK_RED);
+        msg.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do not show this text")));
 
         return TextAction.withStaticEvent(msg, OnCancelClick.class);
     }
@@ -229,7 +229,7 @@ public class HeldItemChatManager {
     }
 
     private static ITextComponent add(ITextComponent to, ITextComponent what) {
-        to.appendSibling(what);
+        to.append(what);
         return what;
     }
 

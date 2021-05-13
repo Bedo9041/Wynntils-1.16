@@ -4,14 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.inventories;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.lwjgl.glfw.GLFW;
-
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.ModCore;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.interfaces.Listener;
@@ -25,24 +18,29 @@ import com.wynntils.core.utils.ItemUtils;
 import com.wynntils.modules.core.overlays.inventories.ChestReplacer;
 import com.wynntils.modules.utilities.UtilitiesModule;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
-
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.block.Blocks;
-import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketClickWindow;
+import net.minecraft.network.play.client.CClickWindowPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BankOverlay implements Listener {
 
@@ -84,7 +82,7 @@ public class BankOverlay implements Listener {
 
     @SubscribeEvent
     public void onBankInit(GuiOverlapEvent.ChestOverlap.InitGui e) {
-        Matcher m = PAGE_PATTERN.matcher(TextFormatting.getTextWithoutFormattingCodes(e.getGui().getLowerInv().getName()));
+        Matcher m = PAGE_PATTERN.matcher(TextFormatting.stripFormatting(e.getGui().getLowerInv().getName()));
         if (!m.matches()) return;
 
         inBank = true;
@@ -97,7 +95,7 @@ public class BankOverlay implements Listener {
         if (destinationPage == page) destinationPage = 0; // if we've already arrived, reset destination
 
         if (searchField == null && UtilitiesConfig.Bank.INSTANCE.showBankSearchBar) {
-            int nameWidth = Minecraft.getInstance().font.width(e.getGui().getUpperInv().getDisplayName().getUnformattedText());
+            int nameWidth = Minecraft.getInstance().font.width(e.getGui().getUpperInv().getDisplayName().getString());
             searchField = new GuiTextFieldWynn(201, Minecraft.getInstance().font, nameWidth + 13, 128, 157 - nameWidth, 10);
             searchField.setText("Search...");
         }
@@ -108,13 +106,13 @@ public class BankOverlay implements Listener {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onBankDrawBackground(GuiOverlapEvent.ChestOverlap.DrawGuiContainerBackgroundLayer e) {
+    public void onBankDrawBackground(GuiOverlapEvent.ChestOverlap.DrawContainerScreenBackgroundLayer e) {
         if (!inBank) return;
 
         // searched item highlight
         for (Slot s : e.getGui().inventorySlots.inventorySlots) {
-            if (s.getStack().isEmpty() || !s.getStack().hasCustomHoverName()) continue;
-            if (!searchedItems.contains(s.getStack())) continue;
+            if (s.getItem().isEmpty() || !s.getItem().hasCustomHoverName()) continue;
+            if (!searchedItems.contains(s.getItem())) continue;
 
             SpecialRendering.renderGodRays(e.getGui().getGuiLeft() + s.xPos + 5,
                     e.getGui().getGuiTop() + s.yPos + 6, 0, 5f, 35, UtilitiesConfig.Bank.INSTANCE.searchHighlightColor);
@@ -145,7 +143,7 @@ public class BankOverlay implements Listener {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onBankDrawForeground(GuiOverlapEvent.ChestOverlap.DrawGuiContainerForegroundLayer e) {
+    public void onBankDrawForeground(GuiOverlapEvent.ChestOverlap.DrawContainerScreenForegroundLayer e) {
         if (!inBank) return;
 
         searchPageForItems(e.getGui());
@@ -168,7 +166,7 @@ public class BankOverlay implements Listener {
                         GlStateManager.translate(0, 0, -300F);
                     }
 
-                    ItemStack is = s.getStack();
+                    ItemStack is = s.getItem();
                     is.setStackDisplayName(TextFormatting.GRAY + "Jump to Page " + destination);
 
                     if (!UtilitiesConfig.Bank.INSTANCE.pageNames.containsKey(destination)) continue;
@@ -326,7 +324,7 @@ public class BankOverlay implements Listener {
         if (itemsLoaded) return;
 
         // if one of these is in inventory, items have loaded in
-        if(!bankGui.inventorySlots.getSlot(PAGE_FORWARD).getStack().isEmpty() || !bankGui.inventorySlots.getSlot(PAGE_BACK).getStack().isEmpty()) {
+        if(!bankGui.inventorySlots.getSlot(PAGE_FORWARD).getItem().isEmpty() || !bankGui.inventorySlots.getSlot(PAGE_BACK).getItem().isEmpty()) {
             itemsLoaded = true;
             searchBank(bankGui);
             if (destinationPage != 0 && destinationPage != page)
@@ -355,10 +353,10 @@ public class BankOverlay implements Listener {
         // don't assume we can hop to a page that's greater than the destination
         if (hop > UtilitiesConfig.Bank.INSTANCE.maxPages && hop > destinationPage) hop -=4;
 
-        CPacketClickWindow packet = null;
+        CClickWindowPacket packet = null;
         if (Math.abs(destinationPage - hop) >= Math.abs(destinationPage - page)) { // we already hopped, or started from a better/equivalent spot
             if (page < destinationPage) { // destination is in front of us
-                ItemStack is = bankGui.inventorySlots.getSlot(PAGE_FORWARD).getStack();
+                ItemStack is = bankGui.inventorySlots.getSlot(PAGE_FORWARD).getItem();
 
                 // ensure arrow is there
                 if (!is.hasCustomHoverName() || !is.getDisplayName().contains(">" + TextFormatting.DARK_GREEN + ">" + TextFormatting.GREEN + ">" + TextFormatting.DARK_GREEN + ">" + TextFormatting.GREEN + ">")) {
@@ -366,10 +364,10 @@ public class BankOverlay implements Listener {
                     searching = 0;
                     return;
                 }
-                packet = new CPacketClickWindow(bankGui.inventorySlots.windowId, PAGE_FORWARD, 0, ClickType.PICKUP, is,
+                packet = new CClickWindowPacket(bankGui.inventorySlots.windowId, PAGE_FORWARD, 0, ClickType.PICKUP, is,
                                 bankGui.inventorySlots.getNextTransactionID(ModCore.mc().player.inventory));
             } else {
-                ItemStack is = bankGui.inventorySlots.getSlot(PAGE_BACK).getStack();
+                ItemStack is = bankGui.inventorySlots.getSlot(PAGE_BACK).getItem();
 
                 // ensure arrow is there
                 if (!is.hasCustomHoverName() || !is.getDisplayName().contains("<" + TextFormatting.DARK_GREEN + "<" + TextFormatting.GREEN + "<" + TextFormatting.DARK_GREEN + "<" + TextFormatting.GREEN + "<")) {
@@ -377,16 +375,16 @@ public class BankOverlay implements Listener {
                     searching = 0;
                     return;
                 }
-                packet = new CPacketClickWindow(bankGui.inventorySlots.windowId, PAGE_BACK, 0, ClickType.PICKUP, is,
+                packet = new CClickWindowPacket(bankGui.inventorySlots.windowId, PAGE_BACK, 0, ClickType.PICKUP, is,
                                 bankGui.inventorySlots.getNextTransactionID(ModCore.mc().player.inventory));
             }
         } else { // attempt to hop using default quick access buttons
             int slotId = QA_SLOTS[(hop / 4)];
-            packet = new CPacketClickWindow(bankGui.inventorySlots.windowId, slotId, 0, ClickType.PICKUP, bankGui.inventorySlots.getSlot(slotId).getStack(),
+            packet = new CClickWindowPacket(bankGui.inventorySlots.windowId, slotId, 0, ClickType.PICKUP, bankGui.inventorySlots.getSlot(slotId).getItem(),
                             bankGui.inventorySlots.getNextTransactionID(ModCore.mc().player.inventory));
         }
 
-        ModCore.mc().getConnection().sendPacket(packet);
+        ModCore.mc().getConnection().send(packet);
     }
 
     private void searchPageForItems(ChestReplacer bankGui) {
@@ -398,7 +396,7 @@ public class BankOverlay implements Listener {
             if (i % 9 > 6) continue; // ignore sidebar items
 
             ItemStack is = bankGui.getLowerInv().getItem(i);
-            if (TextFormatting.getTextWithoutFormattingCodes(is.getDisplayName()).toLowerCase().contains(searchText)) searchedItems.add(is);
+            if (TextFormatting.stripFormatting(is.getDisplayName()).toLowerCase().contains(searchText)) searchedItems.add(is);
         }
     }
 

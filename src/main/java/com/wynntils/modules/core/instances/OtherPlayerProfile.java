@@ -11,9 +11,9 @@ import com.wynntils.modules.core.managers.PlayerEntityManager;
 import com.wynntils.modules.map.overlays.objects.MapPlayerIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -5,8 +5,8 @@
 package com.wynntils.core.utils.helpers;
 
 import com.wynntils.core.framework.FrameworkManager;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class Delay {
 

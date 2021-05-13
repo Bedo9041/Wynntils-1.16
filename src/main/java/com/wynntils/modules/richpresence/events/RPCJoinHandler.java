@@ -104,7 +104,7 @@ public class RPCJoinHandler implements IDiscordActivityEvents.on_activity_join_c
         if (e.getType() != ChatType.CHAT && e.getType() != ChatType.SYSTEM) return;
 
         // handles the invitation
-        if (lastSecret != null && e.getMessage().getUnformattedText().startsWith("You have been invited to join " + lastSecret.getOwner())) {
+        if (lastSecret != null && e.getMessage().getString().startsWith("You have been invited to join " + lastSecret.getOwner())) {
             Minecraft.getInstance().player.chat("/party join " + lastSecret.getOwner());
 
             lastSecret = null;
@@ -112,7 +112,7 @@ public class RPCJoinHandler implements IDiscordActivityEvents.on_activity_join_c
         }
 
         // handles the user join
-        if (sentInvite && e.getMessage().getUnformattedText().startsWith("[" + Minecraft.getInstance().player.getName())) {
+        if (sentInvite && e.getMessage().getString().startsWith("[" + Minecraft.getInstance().player.getName())) {
             sentInvite = false;
             e.setCanceled(true);
             return;
@@ -125,8 +125,8 @@ public class RPCJoinHandler implements IDiscordActivityEvents.on_activity_join_c
 
             if (!m.matches()) return;
 
-            String content = TextFormatting.getTextWithoutFormattingCodes(m.group(4).substring(1));
-            String user = TextFormatting.getTextWithoutFormattingCodes(m.group(2));
+            String content = TextFormatting.stripFormatting(m.group(4).substring(1));
+            String user = TextFormatting.stripFormatting(m.group(2));
 
             if (!RichPresenceModule.getModule().getRichPresence().validSecrent(content.substring(0, content.length() - 1)))
                 return;
@@ -138,7 +138,7 @@ public class RPCJoinHandler implements IDiscordActivityEvents.on_activity_join_c
 
     @SubscribeEvent
     public void onTitle(ClientChatReceivedEvent e) {
-        String text = e.getMessage().getUnformattedText();
+        String text = e.getMessage().getString();
         if ((text.equals("You are already connected to this server!") || text.equals("You're rejoining too quickly! Give us a moment to save your data.")) && waitingInvite) {
             waitingLobby = true;
             waitingInvite = false;

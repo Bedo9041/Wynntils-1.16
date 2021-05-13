@@ -4,12 +4,12 @@
 
 package com.wynntils.modules.core.overlays.inventories;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.modules.questbook.enums.QuestBookPages;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
@@ -46,16 +46,16 @@ public class InventoryReplacer extends InventoryScreen {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    public void drawContainerScreenForegroundLayer(int mouseX, int mouseY) {
+        super.drawContainerScreenForegroundLayer(mouseX, mouseY);
 
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawGuiContainerForegroundLayer(this, mouseX, mouseY));
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawContainerScreenForegroundLayer(this, mouseX, mouseY));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawGuiContainerBackgroundLayer(this, mouseX, mouseY));
+    protected void drawContainerScreenBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawContainerScreenBackgroundLayer(partialTicks, mouseX, mouseY);
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawContainerScreenBackgroundLayer(this, mouseX, mouseY));
     }
 
     @Override

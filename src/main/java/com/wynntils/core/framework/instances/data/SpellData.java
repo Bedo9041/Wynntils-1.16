@@ -41,7 +41,7 @@ public class SpellData extends PlayerData {
 
         CharacterData data = get(CharacterData.class);
         String right = data.getLevel() == 1 ? "Right" : "R";
-        Matcher m = (data.getLevel() == 1 ? LEVEL_1_SPELL_PATTERN : LOW_LEVEL_SPELL_PATTERN).matcher(TextFormatting.getTextWithoutFormattingCodes(subtitle));
+        Matcher m = (data.getLevel() == 1 ? LEVEL_1_SPELL_PATTERN : LOW_LEVEL_SPELL_PATTERN).matcher(TextFormatting.stripFormatting(subtitle));
         if (!m.matches() || m.group(1).equals("?")) return (lastSpell = NO_SPELL);
 
         boolean spell1 = m.group(1).equals(right) ? SPELL_RIGHT : SPELL_LEFT;
@@ -67,7 +67,7 @@ public class SpellData extends PlayerData {
 
         int level = get(CharacterData.class).getLevel();
         if (level <= 11) {
-            String subtitle = ReflectionFields.GuiIngame_displayedSubTitle.getValue(getMinecraft().ingameGUI);
+            String subtitle = ReflectionFields.GuiIngame_displayedSubTitle.getValue(getMinecraft().gui);
             return parseSpellFromTitle(subtitle);
         }
 

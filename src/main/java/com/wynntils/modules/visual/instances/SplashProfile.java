@@ -4,11 +4,11 @@
 
 package com.wynntils.modules.visual.instances;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.webapi.downloader.DownloaderManager;
 import com.wynntils.webapi.downloader.enums.DownloadAction;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 
 import javax.imageio.ImageIO;

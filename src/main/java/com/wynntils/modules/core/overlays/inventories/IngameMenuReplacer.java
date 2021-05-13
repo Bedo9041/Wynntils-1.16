@@ -6,17 +6,17 @@ package com.wynntils.modules.core.overlays.inventories;
 
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.FrameworkManager;
+import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.GuiIngameMenu;
 
 import java.io.IOException;
 import java.util.List;
 
-public class IngameMenuReplacer extends GuiIngameMenu {
+public class IngameMenuReplacer extends IngameMenuScreen {
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.IngameMenuOverlap.InitGui(this, buttonList));
     }

@@ -4,18 +4,18 @@
 
 package com.wynntils.core.framework.rendering;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
 import com.wynntils.core.framework.rendering.colors.MinecraftChatColors;
 import com.wynntils.core.utils.Utils;
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class SmartFontRenderer extends FontRenderer {
 
@@ -191,7 +191,7 @@ public class SmartFontRenderer extends FontRenderer {
             float y = posY;
             float offset = (this.getUnicodeFlag() ? 0.5f : 1f);
             float alpha = ((color >> 24) & 0xFF) / 255F;
-            this.setColor(0F, 0F, 0F, alpha);
+            this.withColor(0F, 0F, 0F, alpha);
 
             // rendering shadows
             switch (shadow) {
@@ -227,7 +227,7 @@ public class SmartFontRenderer extends FontRenderer {
             float blue = (color & 0xFF) / 255F;
             // Alpha calculated for shadow
 
-            this.setColor(red, green, blue, alpha);
+            this.withColor(red, green, blue, alpha);
             float charLength = renderChar(character, italic);
 
             if (bold) {

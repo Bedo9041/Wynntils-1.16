@@ -9,7 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelOutboundHandler;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
-
 import net.minecraft.network.IPacket;
 import net.minecraftforge.eventbus.api.GenericEvent;
 

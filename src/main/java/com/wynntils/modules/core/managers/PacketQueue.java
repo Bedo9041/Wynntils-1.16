@@ -51,7 +51,7 @@ public class PacketQueue {
     public static void proccessQueue() {
         if (complexQueue.isEmpty()) return;
 
-        complexQueue.get(0).sendPacket();
+        complexQueue.get(0).send();
     }
 
 }

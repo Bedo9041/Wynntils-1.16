@@ -167,7 +167,7 @@ public class MusicPlayer {
                         STATUS.setCurrentSong(null);
                     }
                 });
-                player.play();
+                player.playSound();
 
                 fis.close();
                 bis.close();

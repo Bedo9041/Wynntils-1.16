@@ -26,7 +26,7 @@ public class RenderEvent extends Event {
             this.overlayText = overlayText;
         }
 
-        public ItemStack getStack() {
+        public ItemStack getItem() {
             return stack;
         }
 

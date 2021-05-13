@@ -24,7 +24,7 @@ import com.wynntils.modules.questbook.instances.DiscoveryInfo;
 import com.wynntils.modules.questbook.instances.QuestInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -80,7 +80,7 @@ public class QuestManager {
     public static void readQuestBook() {
         if (!Reference.onWorld) return;
 
-        if (ModCore.mc().player.openContainer != null && !(ModCore.mc().player.openContainer instanceof ContainerPlayer)) {
+        if (ModCore.mc().player.containerMenu != null && !(ModCore.mc().player.containerMenu instanceof PlayerContainer)) {
             interrupt();
             return;
         }
@@ -148,7 +148,7 @@ public class QuestManager {
                         continue;
                     }
 
-                    String displayName = StringUtils.normalizeBadString(getTextWithoutFormattingCodes(stack.getDisplayName()));
+                    String displayName = StringUtils.normalizeBadString(stripFormatting(stack.getDisplayName().getString()));
                     if (currentQuests.containsKey(displayName) && currentQuests.get(displayName).equals(stack)) {
                         continue;
                     }
@@ -173,7 +173,7 @@ public class QuestManager {
                         continue;
                     }
 
-                    String displayName = getTextWithoutFormattingCodes(stack.getDisplayName());
+                    String displayName = stripFormatting(stack.getDisplayName().getString());
                     if (currentMiniQuests.containsKey(displayName) && currentMiniQuests.get(displayName).equals(stack)) {
                         continue;
                     }
@@ -191,14 +191,14 @@ public class QuestManager {
                     if (!stack.hasCustomHoverName()) continue; // also checks for nbt
 
                     List<String> lore = ItemUtils.getLore(stack);
-                    if (lore.isEmpty() || !getTextWithoutFormattingCodes(lore.get(0)).contains("✔ Combat Lv")) continue;
+                    if (lore.isEmpty() || !stripFormatting(lore.get(0)).contains("✔ Combat Lv")) continue;
 
                     if (fullRead) {
                         gatheredDiscoveries.add(stack);
                         continue;
                     }
 
-                    String displayName = getTextWithoutFormattingCodes(stack.getDisplayName());
+                    String displayName = stripFormatting(stack.getDisplayName().getString());
                     if (currentDiscoveries.containsKey(displayName)) {
                         continue;
                     }

@@ -10,8 +10,8 @@ import com.wynntils.core.events.custom.WynnWorldEvent;
 import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.modules.richpresence.RichPresenceModule;
 import com.wynntils.modules.richpresence.profiles.SecretContainer;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ClientEvents implements Listener {
 

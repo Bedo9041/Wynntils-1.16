@@ -43,7 +43,7 @@ public class StopWatchOverlay extends Overlay {
 
     @Override
         public void render(RenderGameOverlayEvent.Pre event) {
-        longPressDetection.tick(KeyManager.getStopwatchKey().getKeyBinding().isKeyDown());
+        longPressDetection.tick(KeyManager.getStopwatchKey().getKeyBinding().isDown());
 
         if ((startTime == -1 && lastTime == -1) || longPressDetection.isFinished()) return;
 

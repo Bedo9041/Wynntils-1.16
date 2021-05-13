@@ -8,11 +8,11 @@ import com.wynntils.core.framework.enums.ClassType;
 import com.wynntils.core.framework.instances.containers.PlayerData;
 import com.wynntils.core.framework.instances.containers.UnprocessedAmount;
 import com.wynntils.core.utils.ItemUtils;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
@@ -59,7 +59,7 @@ public class InventoryData extends PlayerData {
         List<String> lore = ItemUtils.getLore(pouch);
 
         for (int i = 4; i < lore.size(); i++) {
-            String line = TextFormatting.getTextWithoutFormattingCodes(lore.get(i));
+            String line = TextFormatting.stripFormatting(lore.get(i));
 
             int end = line.indexOf(" x ");
 

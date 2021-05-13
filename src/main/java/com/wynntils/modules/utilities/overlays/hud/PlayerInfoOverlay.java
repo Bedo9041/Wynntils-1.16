@@ -12,7 +12,7 @@ import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.modules.core.managers.TabManager;
 import com.wynntils.modules.utilities.configs.OverlayConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -32,13 +32,13 @@ public class PlayerInfoOverlay extends Overlay {
     @Override
     public void render(RenderGameOverlayEvent.Post event) {
         if (!Reference.onWorld || !OverlayConfig.PlayerInfo.INSTANCE.replaceVanilla) return;
-        if (!mc.options.keyBindPlayerList.isKeyDown() && animationProgress <= 0.0) return;
+        if (!mc.options.keyBindPlayerList.isDown() && animationProgress <= 0.0) return;
 
         double animation = 1;
         if (OverlayConfig.PlayerInfo.INSTANCE.openingDuration > 0) { // Animation Detection
             if (lastTime == -1) lastTime += Minecraft.getSystemTime();
 
-            if (mc.options.keyBindPlayerList.isKeyDown()) {
+            if (mc.options.keyBindPlayerList.isDown()) {
                 animationProgress += (Minecraft.getSystemTime() - lastTime) / OverlayConfig.PlayerInfo.INSTANCE.openingDuration;
                 animationProgress = Math.min(1, animationProgress);
             } else if (animationProgress > 0.0) {
@@ -131,7 +131,7 @@ public class PlayerInfoOverlay extends Overlay {
 
         lastPlayers = players.stream()
                 .filter(c -> c.getDisplayName() != null)
-                .map(c -> wrapText(c.getDisplayName().getUnformattedText().replace("§7", "§0"), 73))
+                .map(c -> wrapText(c.getDisplayName().getString().replace("§7", "§0"), 73))
                 .collect(Collectors.toList());
 
         return lastPlayers;

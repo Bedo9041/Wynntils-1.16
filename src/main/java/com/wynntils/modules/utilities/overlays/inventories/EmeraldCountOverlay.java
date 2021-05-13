@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.inventories;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.instances.PlayerInfo;
@@ -18,12 +19,11 @@ import com.wynntils.core.framework.rendering.textures.Texture;
 import com.wynntils.core.utils.ItemUtils;
 import com.wynntils.core.utils.reference.EmeraldSymbols;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -31,15 +31,15 @@ import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
 
-import static com.mojang.blaze3d.platform.GlStateManager.color;
 import static com.mojang.blaze3d.platform.GlStateManager._disableLighting;
+import static com.mojang.blaze3d.platform.GlStateManager.color;
 
 public class EmeraldCountOverlay implements Listener {
 
     private static final CustomColor textColor = new CustomColor(77f / 255f, 77f / 255f, 77f / 255f, 1);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onPlayerInventory(GuiOverlapEvent.InventoryOverlap.DrawGuiContainerForegroundLayer e) {
+    public void onPlayerInventory(GuiOverlapEvent.InventoryOverlap.DrawContainerScreenForegroundLayer e) {
         if (!Reference.onWorld || !UtilitiesConfig.Items.INSTANCE.emeraldCountInventory) return;
 
         if (UtilitiesConfig.Items.INSTANCE.emeraldCountText) {
@@ -50,7 +50,7 @@ public class EmeraldCountOverlay implements Listener {
     }
 
     @SubscribeEvent
-    public void onChestInventory(GuiOverlapEvent.ChestOverlap.DrawGuiContainerForegroundLayer e) {
+    public void onChestInventory(GuiOverlapEvent.ChestOverlap.DrawContainerScreenForegroundLayer e) {
         if (!Reference.onWorld || !(UtilitiesConfig.Items.INSTANCE.emeraldCountInventory || UtilitiesConfig.Items.INSTANCE.emeraldCountChest)) return;
 
         IInventory lowerInv = e.getGui().getLowerInv();
@@ -73,7 +73,7 @@ public class EmeraldCountOverlay implements Listener {
     }
 
     @SubscribeEvent
-    public void onChestInventory(GuiOverlapEvent.HorseOverlap.DrawGuiContainerForegroundLayer e) {
+    public void onChestInventory(GuiOverlapEvent.HorseOverlap.DrawContainerScreenForegroundLayer e) {
         if (!Reference.onWorld || !UtilitiesConfig.Items.INSTANCE.emeraldCountInventory) return;
 
         IInventory lowerInv = e.getGui().getLowerInv();
@@ -102,7 +102,7 @@ public class EmeraldCountOverlay implements Listener {
 
         // generating text
         String moneyText = "";
-        if (Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT)) {  // plain text
+        if (Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT)) {  // plain text
             moneyText = formatAmount(moneyAmount) + EmeraldSymbols.EMERALDS;
         } else {  // sliced text
             int[] moneySlices = calculateMoneyAmount(moneyAmount);
@@ -135,7 +135,7 @@ public class EmeraldCountOverlay implements Listener {
         String emeraldAmount = null;
         String blocksAmount = null;
         String leAmount = null;
-        if (Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT)) {
+        if (Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT)) {
             // Alternative render: Amount after converting all to one type (Including fractional blocks / LE)
             emeraldAmount = formatAmount((double) moneyAmount);
             blocksAmount = formatAmount(moneyAmount / 64D);

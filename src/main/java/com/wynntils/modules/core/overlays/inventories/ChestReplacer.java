@@ -8,9 +8,8 @@ import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.FrameworkManager;
 import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -38,8 +37,8 @@ public class ChestReplacer extends ChestScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.InitGui(this, this.buttonList));
     }
 
@@ -72,15 +71,15 @@ public class ChestReplacer extends ChestScreen {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawGuiContainerForegroundLayer(this, mouseX, mouseY));
+    public void drawContainerScreenForegroundLayer(int mouseX, int mouseY) {
+        super.drawContainerScreenForegroundLayer(mouseX, mouseY);
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawContainerScreenForegroundLayer(this, mouseX, mouseY));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawGuiContainerBackgroundLayer(this, mouseX, mouseY));
+    protected void drawContainerScreenBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawContainerScreenBackgroundLayer(partialTicks, mouseX, mouseY);
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawContainerScreenBackgroundLayer(this, mouseX, mouseY));
     }
 
     @Override

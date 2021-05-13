@@ -12,8 +12,8 @@ import com.wynntils.modules.map.MapModule;
 import com.wynntils.modules.map.configs.MapConfig;
 import com.wynntils.modules.map.instances.PathWaypointProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
 
@@ -34,8 +34,8 @@ public class PathWaypointOverwiewUI extends Screen {
     private int pageHeight;
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         paths = MapConfig.Waypoints.INSTANCE.pathWaypoints;
 
         pageHeight = (this.height - 100) / 25;
@@ -92,15 +92,15 @@ public class PathWaypointOverwiewUI extends Screen {
             checkAvailablePages();
             setEditButtons();
         } else if (b == exitBtn) {
-            Utils.displayGuiScreen(new MainWorldMapUI());
+            Utils.setScreen(new MainWorldMapUI());
         } else if (b.id % 10 == 3) {
-            Minecraft.getInstance().displayGuiScreen(new PathWaypointCreationUI(paths.get(b.id / 10 + page * pageHeight)));
+            Minecraft.getInstance().setScreen(new PathWaypointCreationUI(paths.get(b.id / 10 + page * pageHeight)));
         } else if (b.id %10 == 5) {
             MapConfig.Waypoints.INSTANCE.pathWaypoints.remove(paths.get(b.id / 10 + page * pageHeight));
             MapConfig.Waypoints.INSTANCE.saveSettings(MapModule.getModule());
-            Minecraft.getInstance().displayGuiScreen(new PathWaypointOverwiewUI());
+            Minecraft.getInstance().setScreen(new PathWaypointOverwiewUI());
         } else if (b == newBtn) {
-            Minecraft.getInstance().displayGuiScreen(new PathWaypointCreationUI());
+            Minecraft.getInstance().setScreen(new PathWaypointCreationUI());
         }
     }
 

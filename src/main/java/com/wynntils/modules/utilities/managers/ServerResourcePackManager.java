@@ -10,7 +10,7 @@ import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.network.play.server.SPacketResourcePackSend;
+import net.minecraft.network.play.server.SSendResourcePackPacket;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
@@ -34,7 +34,7 @@ public class ServerResourcePackManager {
         }
     }
 
-    public static boolean shouldCancelResourcePackLoad(SPacketResourcePackSend packet) {
+    public static boolean shouldCancelResourcePackLoad(SSendResourcePackPacket packet) {
         if (!Reference.onServer) return false;
 
         String resourcePack = packet.getURL();

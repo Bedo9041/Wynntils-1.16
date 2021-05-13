@@ -24,7 +24,7 @@ public class FlameSpawnCondition implements EntitySpawnCodition {
         if (!ROOTS_OF_CORRUPTION.isInside(pos)) return false;
 
         // max distance
-        double yDistance = Math.abs(pos.getY() - player.posY);
+        double yDistance = Math.abs(pos.getY() - player.getY());
         if (yDistance > 0) return false;
         pos.subtract(0, random.nextInt(10), 0);
 

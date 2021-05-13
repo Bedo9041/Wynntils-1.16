@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.chat.overlays;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.events.custom.ChatEvent;
 import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.core.utils.objects.Pair;
@@ -14,10 +15,10 @@ import com.wynntils.modules.chat.managers.ChatManager;
 import com.wynntils.modules.chat.managers.TabManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.*;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.ChatLine;
+import net.minecraft.client.gui.NewChatGui;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -26,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +55,7 @@ public class ChatOverlay extends GuiNewChat {
     }
 
     public void drawChat(int updateCounter) {
-        if (mc.options.chatVisibility != PlayerEntity.EnumChatVisibility.HIDDEN) {
+        if (mc.options.chatVisibility != PlayerEntity.ChatVisibility.HIDDEN) {
             int chatSize = getCurrentTab().getCurrentMessages().size();
 
             getCurrentTab().checkNotifications();
@@ -139,8 +139,8 @@ public class ChatOverlay extends GuiNewChat {
     }
 
     public void printChatMessageWithOptionalDeletion(ITextComponent chatComponent, int chatLineId) {
-        setChatLine(chatComponent, chatLineId, mc.ingameGUI.getUpdateCounter(), false, false);
-        LOGGER.info("[CHAT] " + chatComponent.getUnformattedText().replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n"));
+        setChatLine(chatComponent, chatLineId, mc.gui.getUpdateCounter(), false, false);
+        LOGGER.info("[CHAT] " + chatComponent.getString().replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n"));
     }
 
     public void printUnloggedChatMessage(ITextComponent chatComponent) {
@@ -148,7 +148,7 @@ public class ChatOverlay extends GuiNewChat {
     }
 
     public void printUnloggedChatMessage(ITextComponent chatComponent, int chatLineId) {
-        setChatLine(chatComponent, chatLineId, mc.ingameGUI.getUpdateCounter(), false, true);
+        setChatLine(chatComponent, chatLineId, mc.gui.getUpdateCounter(), false, true);
     }
 
     private void setChatLine(ITextComponent chatComponent, int chatLineId, int updateCounter, boolean displayOnly, boolean noEvent) {
@@ -225,8 +225,8 @@ public class ChatOverlay extends GuiNewChat {
                         ITextComponent chatWithCounter = displayedMessage.createCopy();
 
                         ITextComponent counter = new StringTextComponent(" [" + (tab.getLastAmount()) + "x]");
-                        counter.getStyle().setColor(TextFormatting.GRAY);
-                        chatWithCounter.appendSibling(counter);
+                        counter.getStyle().withColor(TextFormatting.GRAY);
+                        chatWithCounter.append(counter);
 
                         int chatWidth = MathHelper.floor((float)getChatWidth() / getChatScale());
 
@@ -352,7 +352,7 @@ public class ChatOverlay extends GuiNewChat {
     }
 
     public boolean getChatOpen() {
-        return mc.screen instanceof GuiChat;
+        return mc.screen instanceof NewChatGui;
     }
 
     public void deleteChatLine(int id) {

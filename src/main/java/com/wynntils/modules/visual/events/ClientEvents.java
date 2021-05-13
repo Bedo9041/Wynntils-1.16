@@ -38,8 +38,8 @@ public class ClientEvents implements Listener {
 
         // Requests the chunk to be unloaded if loaded before loading (???)
         // this fixes some weird ass issue with optifine, don't ask too much
-        if (packet.isFullChunk() && mc.world.getChunk(packet.getChunkX(), packet.getChunkZ()).isLoaded()) {
-            mc.submit(() -> mc.world.getChunkProvider().unloadChunk(packet.getChunkX(), packet.getChunkZ()));
+        if (packet.isFullChunk() && mc.level.getChunk(packet.getChunkX(), packet.getChunkZ()).isLoaded()) {
+            mc.submit(() -> mc.level.getChunkProvider().unloadChunk(packet.getChunkX(), packet.getChunkZ()));
         }
 
         CachedChunkManager.asyncCacheChunk(packet);

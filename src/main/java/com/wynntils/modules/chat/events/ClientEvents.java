@@ -17,23 +17,23 @@ import com.wynntils.modules.chat.overlays.ChatOverlay;
 import com.wynntils.modules.chat.overlays.gui.ChatGUI;
 import com.wynntils.webapi.services.TranslationManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.NewChatGui;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
 
 public class ClientEvents implements Listener {
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent e) {
-        if (e.getGui() instanceof GuiChat) {
+        if (e.getGui() instanceof NewChatGui) {
             if (e.getGui() instanceof ChatGUI) return;
-            String defaultText = ReflectionFields.GuiChat_defaultInputFieldText.getValue(e.getGui());
+            String defaultText = ReflectionFields.NewChatGui_defaultInputFieldText.getValue(e.getGui());
 
             e.setGui(new ChatGUI(defaultText));
         }
@@ -42,7 +42,7 @@ public class ClientEvents implements Listener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onChatReceived(ClientChatReceivedEvent e) {
         ITextComponent msg = e.getMessage();
-        if (msg.getUnformattedText().startsWith("[Info] ") && ChatConfig.INSTANCE.filterWynncraftInfo) {
+        if (msg.getString().startsWith("[Info] ") && ChatConfig.INSTANCE.filterWynncraftInfo) {
             e.setCanceled(true);
         } else if (msg.getFormattedText().startsWith("\n                       " + TextFormatting.GOLD + TextFormatting.BOLD + "Welcome to Wynncraft!") &&
                 !msg.getFormattedText().contains("n the Trade Market") && ChatConfig.INSTANCE.filterWynncraftInfo) {
@@ -80,7 +80,7 @@ public class ClientEvents implements Listener {
 
     @SubscribeEvent
     public void onWynnLogin(WynncraftServerEvent.Login e) {
-        ReflectionFields.GuiIngame_persistantChatGUI.setValue(Minecraft.getInstance().ingameGUI, new ChatOverlay());
+        ReflectionFields.GuiIngame_persistantChatGUI.setValue(Minecraft.getInstance().gui, new ChatOverlay());
         TranslationManager.init();
     }
 

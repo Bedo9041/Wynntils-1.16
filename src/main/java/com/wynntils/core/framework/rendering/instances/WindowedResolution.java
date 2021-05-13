@@ -4,8 +4,8 @@
 
 package com.wynntils.core.framework.rendering.instances;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.MainWindow;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.Display;
 
 public class WindowedResolution {

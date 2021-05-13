@@ -12,9 +12,9 @@ import com.wynntils.core.utils.objects.IntRange;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import com.wynntils.modules.utilities.managers.KeyManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.regex.Matcher;
@@ -27,11 +27,11 @@ public class ItemLevelOverlay implements Listener {
     @SubscribeEvent
     public void onItemOverlay(RenderEvent.DrawItemOverlay event) {
         if (!UtilitiesConfig.Items.INSTANCE.itemLevelOverlayOutsideGui && Minecraft.getInstance().screen == null) return;
-        if (!KeyManager.getShowLevelOverlayKey().isKeyDown()) return;
+        if (!KeyManager.getShowLevelOverlayKey().isDown()) return;
 
-        ItemStack stack = event.getStack();
+        ItemStack stack = event.getItem();
         Item item = stack.getItem();
-        String name = stack.getDisplayName();
+        String name = stack.getDisplayName().getString();
 
         // powder tier
         if (item == Items.DYE || item == Items.GUNPOWDER || item == Items.CLAY_BALL || item == Items.SUGAR) {

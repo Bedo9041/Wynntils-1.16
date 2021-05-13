@@ -4,7 +4,7 @@
 
 package com.wynntils.modules.questbook.overlays.ui;
 
-import com.wynntils.core.framework.enums.wynntils.WynntilsSound;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.SmartFontRenderer;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
@@ -12,7 +12,6 @@ import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.core.utils.Utils;
 import com.wynntils.core.utils.objects.Location;
 import com.wynntils.modules.map.overlays.ui.MainWorldMapUI;
-import com.wynntils.modules.questbook.enums.QuestBookPages;
 import com.wynntils.modules.questbook.enums.QuestLevelType;
 import com.wynntils.modules.questbook.enums.QuestStatus;
 import com.wynntils.modules.questbook.instances.IconContainer;
@@ -22,13 +21,12 @@ import com.wynntils.modules.questbook.managers.QuestManager;
 import com.wynntils.webapi.WebManager;
 import com.wynntils.webapi.request.Request;
 import com.wynntils.webapi.request.RequestHandler;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.MainWindow;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
@@ -303,7 +301,7 @@ public class QuestsPage extends QuestBookPage {
                 if (!overQuest.hasTargetLocation()) return;
 
                 Location loc = overQuest.getTargetLocation();
-                Utils.displayGuiScreen(new MainWorldMapUI((float) loc.x, (float) loc.z));
+                Utils.setScreen(new MainWorldMapUI((float) loc.x, (float) loc.z));
                 return;
             }
         }

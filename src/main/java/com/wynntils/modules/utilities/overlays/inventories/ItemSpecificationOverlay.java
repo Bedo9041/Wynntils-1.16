@@ -4,11 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.inventories;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.enums.SkillPoint;
@@ -22,26 +18,29 @@ import com.wynntils.core.utils.ItemUtils;
 import com.wynntils.core.utils.StringUtils;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import com.wynntils.webapi.profiles.item.enums.ItemType;
-
-import net.minecraft.client.gui.inventory.GuiContainer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ItemSpecificationOverlay implements Listener {
 
-    private void renderOverlay(GuiContainer gui) {
+    private void renderOverlay(ContainerScreen gui) {
         if (!Reference.onWorld) return;
 
         for (Slot s : gui.inventorySlots.inventorySlots) {
-            ItemStack stack = s.getStack();
+            ItemStack stack = s.getItem();
             if (stack.isEmpty() || !stack.hasCustomHoverName()) continue; // display name also checks for tag compound
 
             List<String> lore = ItemUtils.getLore(stack);
-            String name = StringUtils.normalizeBadString(stack.getDisplayName());
+            String name = StringUtils.normalizeBadString(stack.getDisplayName().getString());
 
             // name and lore fixing
             stack.setStackDisplayName(name);

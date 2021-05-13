@@ -35,11 +35,11 @@ public class CharacterProfile {
         this.stack = stack;
         this.slot = slot;
 
-        String name = stack.getDisplayName();
-        className = TextFormatting.getTextWithoutFormattingCodes(name).replace("[>] Select ", "");
+        String name = stack.getDisplayName().getString();
+        className = TextFormatting.stripFormatting(name).replace("[>] Select ", "");
 
         for (String line : ItemUtils.getLore(stack)) {
-            line = TextFormatting.getTextWithoutFormattingCodes(line);
+            line = TextFormatting.stripFormatting(line);
 
             if (line.contains("Deletion in ")) {
                 deletion = line.replace("Deletion in ", "");
@@ -120,7 +120,7 @@ public class CharacterProfile {
         return enabledGameModes;
     }
 
-    public ItemStack getStack() {
+    public ItemStack getItem() {
         return stack;
     }
 

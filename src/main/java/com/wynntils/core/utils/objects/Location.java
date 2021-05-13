@@ -6,6 +6,8 @@ package com.wynntils.core.utils.objects;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
@@ -19,7 +21,7 @@ public class Location extends Point3d {
     }
 
     public Location(Entity entity) {
-        super(entity.posX, entity.posY, entity.posZ);
+        super(entity.getX(), entity.getY(), entity.getZ());
     }
 
     public Location(Tuple3d t) {
@@ -35,11 +37,11 @@ public class Location extends Point3d {
     }
 
     // Convert from net.minecraft.util.math vectors (Don't import so the names aren't confusing)
-    public Location(net.minecraft.util.math.Vec3i v) {
+    public Location(Vector3i v) {
         super(v.getX(), v.getY(), v.getZ());
     }
 
-    public Location(net.minecraft.util.math.Vec3d v) {
+    public Location(Vector3d v) {
         super(v.x, v.y, v.z);
     }
 
@@ -115,8 +117,8 @@ public class Location extends Point3d {
         return new BlockPos(x, y, z);
     }
 
-    public final net.minecraft.util.math.Vec3d toMinecraftVec3d() {
-        return new net.minecraft.util.math.Vec3d(x, y, z);
+    public final Vector3d toMinecraftVector3d() {
+        return new Vector3d(x, y, z);
     }
 
     public Location clone() {

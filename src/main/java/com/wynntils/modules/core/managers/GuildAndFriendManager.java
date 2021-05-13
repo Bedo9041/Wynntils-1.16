@@ -8,7 +8,7 @@ import com.wynntils.modules.core.instances.OtherPlayerProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +29,10 @@ public class GuildAndFriendManager {
         if (player == null) return;
         ClientPlayNetHandler conn = player.connection;
         if (conn == null) return;
-        for (NetworkPlayerInfo i : conn.getPlayerInfoMap()) {
-            String name = i.getGameProfile().getName();
+        for (NetworkPlayerInfo i : conn.getOnlinePlayers()) {
+            String name = i.getProfile().getName();
             if (name == null) continue;
-            tryResolveName(i.getGameProfile().getId(), name);
+            tryResolveName(i.getProfile().getId(), name);
         }
     }
 

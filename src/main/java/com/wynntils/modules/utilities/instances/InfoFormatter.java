@@ -66,17 +66,17 @@ public class InfoFormatter {
 
         // X coordinate
         registerFormatter((input) ->
-                Integer.toString((int) mc.player.posX),
+                Integer.toString((int) mc.player.getX()),
                 "x");
 
         // Y coordinate
         registerFormatter((input) ->
-                Integer.toString((int) mc.player.posY),
+                Integer.toString((int) mc.player.getY()),
                 "y");
 
         // Z coordinate
         registerFormatter((input) ->
-                Integer.toString((int) mc.player.posZ),
+                Integer.toString((int) mc.player.getZ()),
                 "z");
 
         // The facing cardinal direction

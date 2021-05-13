@@ -9,13 +9,14 @@ import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.modules.map.overlays.enums.MapButtonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static com.mojang.blaze3d.platform.GlStateManager.*;
+import static com.mojang.blaze3d.platform.GlStateManager._popMatrix;
+import static com.mojang.blaze3d.platform.GlStateManager._pushMatrix;
 
 public class MapButton {
 
@@ -66,7 +67,7 @@ public class MapButton {
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSound.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1f)
+                SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1f, 1f)
         );
 
         onClick.accept(this, mouseButton);

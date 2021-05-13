@@ -55,7 +55,7 @@ public class CommandExportDiscoveries extends CommandBase implements IClientComm
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         ITextComponent command = new StringTextComponent("/exportdiscoveries");
-        command.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/exportdiscoveries"));
+        command.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/exportdiscoveries"));
 
         if (!Reference.onWorld)
             throw new CommandException("You need to be in a Wynncraft world to run %s", command);
@@ -115,16 +115,16 @@ public class CommandExportDiscoveries extends CommandBase implements IClientComm
                 DiscoveryInfo discovery = discoveriesIterator.next();
                 output.write(discovery.getMinLevel() + ",");
                 output.write(StringUtils.firstCharToUpper(new String[] { discovery.getType().toString().toLowerCase() }) + ",");
-                output.write("\"" + TextFormatting.getTextWithoutFormattingCodes(discovery.getName()) + "\"");
+                output.write("\"" + TextFormatting.stripFormatting(discovery.getName()) + "\"");
                 if (discoveriesIterator.hasNext()) {
                     output.write("\n");
                 }
             }
             ITextComponent text = new StringTextComponent("Exported discoveries to ");
             ITextComponent fileText = new StringTextComponent(exportFile.getName());
-            fileText.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, exportFile.getCanonicalPath()));
+            fileText.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, exportFile.getCanonicalPath()));
             fileText.getStyle().setUnderlined(true);
-            text.appendSibling(fileText);
+            text.append(fileText);
             ModCore.mc().submit(() -> ModCore.mc().player.sendMessage(text));
         } catch (IOException ex) {
             ex.printStackTrace();

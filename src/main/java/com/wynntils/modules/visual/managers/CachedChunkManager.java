@@ -138,8 +138,8 @@ public class CachedChunkManager {
                 Thread.sleep(1000);
             } catch (Exception ignored) { }
 
-            int renderDistance = mc.options.renderDistanceChunks;
-            ChunkPos player = new ChunkPos(mc.player.chunkCoordX, mc.player.chunkCoordZ);
+            int renderDistance = mc.options.renderDistance;
+            ChunkPos player = new ChunkPos(mc.player.xChunk, mc.player.zChunk);
 
             // Start by removing chunks that are not in the render distance
             Iterator<ChunkPos> it = loadedChunks.iterator();
@@ -167,7 +167,7 @@ public class CachedChunkManager {
                     ChunkPos pos = new ChunkPos(player.x + x, player.z + z);
 
                     if (loadedChunks.contains(pos)) continue;
-                    if (mc.world.getChunk(pos.x, pos.z).isLoaded()) continue;
+                    if (mc.level.getChunk(pos.x, pos.z).isLoaded()) continue;
 
                     toLoad.add(pos);
                 }

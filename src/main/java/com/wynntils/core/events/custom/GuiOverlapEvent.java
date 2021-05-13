@@ -11,8 +11,8 @@ import com.wynntils.modules.core.overlays.inventories.IngameMenuReplacer;
 import com.wynntils.modules.core.overlays.inventories.InventoryReplacer;
 import com.wynntils.modules.core.overlays.ui.PlayerInfoReplacer;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -111,11 +111,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
             }
         }
 
-        public static class DrawGuiContainerForegroundLayer extends InventoryOverlap {
+        public static class DrawContainerScreenForegroundLayer extends InventoryOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerForegroundLayer(InventoryReplacer guiInventory, int mouseX, int mouseY) {
+            public DrawContainerScreenForegroundLayer(InventoryReplacer guiInventory, int mouseX, int mouseY) {
                 super(guiInventory);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;
@@ -130,11 +130,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
             }
         }
 
-        public static class DrawGuiContainerBackgroundLayer extends InventoryOverlap {
+        public static class DrawContainerScreenBackgroundLayer extends InventoryOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerBackgroundLayer(InventoryReplacer guiInventory, int mouseX, int mouseY) {
+            public DrawContainerScreenBackgroundLayer(InventoryReplacer guiInventory, int mouseX, int mouseY) {
                 super(guiInventory);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;
@@ -360,11 +360,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
 
         }
 
-        public static class DrawGuiContainerForegroundLayer extends ChestOverlap {
+        public static class DrawContainerScreenForegroundLayer extends ChestOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerForegroundLayer(ChestReplacer guiChest, int mouseX, int mouseY) {
+            public DrawContainerScreenForegroundLayer(ChestReplacer guiChest, int mouseX, int mouseY) {
                 super(guiChest);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;
@@ -379,11 +379,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
             }
         }
 
-        public static class DrawGuiContainerBackgroundLayer extends ChestOverlap {
+        public static class DrawContainerScreenBackgroundLayer extends ChestOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerBackgroundLayer(ChestReplacer guiChest, int mouseX, int mouseY) {
+            public DrawContainerScreenBackgroundLayer(ChestReplacer guiChest, int mouseX, int mouseY) {
                 super(guiChest);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;
@@ -581,11 +581,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
             }
         }
 
-        public static class DrawGuiContainerForegroundLayer extends HorseOverlap {
+        public static class DrawContainerScreenForegroundLayer extends HorseOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerForegroundLayer(HorseReplacer guiHorse, int mouseX, int mouseY) {
+            public DrawContainerScreenForegroundLayer(HorseReplacer guiHorse, int mouseX, int mouseY) {
                 super(guiHorse);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;
@@ -600,11 +600,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
             }
         }
 
-        public static class DrawGuiContainerBackgroundLayer extends HorseOverlap {
+        public static class DrawContainerScreenBackgroundLayer extends HorseOverlap {
 
             int mouseX, mouseY;
 
-            public DrawGuiContainerBackgroundLayer(HorseReplacer guiHorse, int mouseX, int mouseY) {
+            public DrawContainerScreenBackgroundLayer(HorseReplacer guiHorse, int mouseX, int mouseY) {
                 super(guiHorse);
 
                 this.mouseX = mouseX; this.mouseY = mouseY;

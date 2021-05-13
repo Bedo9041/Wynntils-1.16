@@ -17,7 +17,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes;
+import static net.minecraft.util.text.TextFormatting.stripFormatting;
 
 public class DiscoveryInfo {
 
@@ -43,7 +43,7 @@ public class DiscoveryInfo {
         // simple parameters
         name = originalStack.getDisplayName();
         name = StringUtils.normalizeBadString(name.substring(0, name.length() - 1));
-        minLevel = Integer.parseInt(getTextWithoutFormattingCodes(lore.get(0)).replace("✔ Combat Lv. Min: ", ""));
+        minLevel = Integer.parseInt(stripFormatting(lore.get(0)).replace("✔ Combat Lv. Min: ", ""));
 
         // type
         type = null;
@@ -55,7 +55,7 @@ public class DiscoveryInfo {
         // flat description
         StringBuilder descriptionBuilder = new StringBuilder();
         for (int x = 2; x < lore.size(); x++) {
-            descriptionBuilder.append(getTextWithoutFormattingCodes(lore.get(x)));
+            descriptionBuilder.append(stripFormatting(lore.get(x)));
         }
         description = descriptionBuilder.toString();
 
@@ -67,7 +67,7 @@ public class DiscoveryInfo {
 
         // Guild territory profile
         if (type == DiscoveryType.TERRITORY || type == DiscoveryType.WORLD) {
-            String apiName = TextFormatting.getTextWithoutFormattingCodes(name);
+            String apiName = TextFormatting.stripFormatting(name);
             guildTerritory = WebManager.getTerritories().get(apiName);
             if (guildTerritory == null) {
                 guildTerritory = WebManager.getTerritories().get(apiName.replace('\'', '’'));
@@ -97,7 +97,7 @@ public class DiscoveryInfo {
 
         // Guild territory profile
         if (type == DiscoveryType.TERRITORY || type == DiscoveryType.WORLD) {
-            String apiName = TextFormatting.getTextWithoutFormattingCodes(name);
+            String apiName = TextFormatting.stripFormatting(name);
             guildTerritory = WebManager.getTerritories().get(apiName);
             if (guildTerritory == null) {
                 guildTerritory = WebManager.getTerritories().get(apiName.replace('\'', '’'));

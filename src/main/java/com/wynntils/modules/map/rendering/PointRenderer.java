@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.map.rendering;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
 import com.wynntils.core.framework.rendering.textures.Texture;
@@ -12,26 +13,24 @@ import com.wynntils.core.utils.objects.Pair;
 import com.wynntils.modules.map.instances.LootRunPath;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +38,11 @@ public class PointRenderer {
 
     public static void drawTexturedLines(Texture texture, Long2ObjectMap<List<List<LootRunPath.LootRunPathLocation>>> points, Long2ObjectMap<List<List<Vector3d>>> directions, CustomColor color, float width) {
         List<ChunkPos> chunks = new ArrayList<>();
-        int renderDistance = Minecraft.getInstance().options.renderDistanceChunks;
+        int renderDistance = Minecraft.getInstance().options.renderDistance;
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int z = -renderDistance; z <= renderDistance; z++) {
-                int playerChunkX = Minecraft.getInstance().player.chunkCoordX;
-                int playerChunkZ = Minecraft.getInstance().player.chunkCoordZ;
+                int playerChunkX = Minecraft.getInstance().player.xChunk;
+                int playerChunkZ = Minecraft.getInstance().player.zChunk;
                 ChunkPos chunk = new ChunkPos(x + playerChunkX, z + playerChunkZ);
                 chunks.add(chunk);
             }
@@ -56,7 +55,7 @@ public class PointRenderer {
         texture.bind();
 
         for (ChunkPos chunk : chunks) {
-            if (!Minecraft.getInstance().world.isChunkGeneratedAt(chunk.x, chunk.z)) {
+            if (!Minecraft.getInstance().level.isChunkGeneratedAt(chunk.x, chunk.z)) {
                 continue;
             }
             List<List<LootRunPath.LootRunPathLocation>> pointsInChunk = points.get(ChunkPos.asLong(chunk.x, chunk.z));
@@ -69,14 +68,14 @@ public class PointRenderer {
                     List<Pair<LootRunPath.LootRunPathLocation, Vector3d>> toRender = new ArrayList<>();
                     for (int k = 0; k < pointsInRoute.size(); ++k) {
                         Point3d start = new Point3d(pointsInRoute.get(k).getLocation());
-                        World world = Minecraft.getInstance().world;
+                        World world = Minecraft.getInstance().level;
                         BlockPos minPos = new BlockPos(start.x - 0.3D, start.y - 1D, start.z - 0.3D);
                         BlockPos maxPos = new BlockPos(start.x + 0.3D, start.y - 1D, start.z + 0.3D);
-                        Iterable<BlockPos> blocks = BlockPos.getAllInBox(minPos, maxPos);
+                        Iterable<BlockPos> blocks = BlockPos.betweenClosed(minPos, maxPos);
                         boolean barrier = false;
                         boolean validBlock = false;
                         for (BlockPos blockInArea : blocks) {
-                            IBlockState blockStateInArea = world.getBlockState(blockInArea);
+                            BlockState blockStateInArea = world.getBlockState(blockInArea);
                             if (blockStateInArea.getBlock() == Blocks.BARRIER) {
                                 barrier = true;
                             } else if (blockStateInArea.getCollisionBoundingBox(world, blockInArea) != null) {
@@ -126,10 +125,10 @@ public class PointRenderer {
                         end.y -= .24;
 
                         BlockPos startBlockPos = new BlockPos(start.x, start.y, start.z);
-                        Vec3d startVec = new Vec3d(start.x, start.y, start.z);
+                        Vector3d startVec = new Vector3d(start.x, start.y, start.z);
 
                         BlockPos endBlockPos = new BlockPos(end.x, end.y, end.z);
-                        Vec3d endVec = new Vec3d(end.x, end.y, end.z);
+                        Vector3d endVec = new Vector3d(end.x, end.y, end.z);
 
                         AxisAlignedBB startCollisionBox = world.getBlockState(startBlockPos).getCollisionBoundingBox(world, startBlockPos);
                         if (startCollisionBox != Block.NULL_AABB) {
@@ -220,15 +219,15 @@ public class PointRenderer {
         normal.cross(new Vector3d(direction.x, 0, direction.z), normal);
         normal.normalize();
 
-        Vec3d scaled = new Vec3d(normal.x, normal.y, normal.z).scale(width);
+        Vector3d scaled = new Vector3d(normal.x, normal.y, normal.z).scale(width);
 
         // we need 4 points for rendering
-        Vec3d startVec = new Vec3d(start.x, start.y, start.z);
-        Vec3d endVec = new Vec3d(end.x, end.y, end.z);
-        Vec3d p1 = startVec.add(scaled);
-        Vec3d p2 = startVec.subtract(scaled);
-        Vec3d p3 = endVec.add(scaled);
-        Vec3d p4 = endVec.subtract(scaled);
+        Vector3d startVec = new Vector3d(start.x, start.y, start.z);
+        Vector3d endVec = new Vector3d(end.x, end.y, end.z);
+        Vector3d p1 = startVec.add(scaled);
+        Vector3d p2 = startVec.subtract(scaled);
+        Vector3d p3 = endVec.add(scaled);
+        Vector3d p4 = endVec.subtract(scaled);
 
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buffer = tess.getBuilder();
@@ -251,11 +250,11 @@ public class PointRenderer {
         if (locations.isEmpty()) return;
 
         List<ChunkPos> chunks = new ArrayList<>();
-        int renderDistance = Minecraft.getInstance().options.renderDistanceChunks;
+        int renderDistance = Minecraft.getInstance().options.renderDistance;
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int z = -renderDistance; z <= renderDistance; z++) {
-                int playerChunkX = Minecraft.getInstance().player.chunkCoordX;
-                int playerChunkZ = Minecraft.getInstance().player.chunkCoordZ;
+                int playerChunkX = Minecraft.getInstance().player.xChunk;
+                int playerChunkZ = Minecraft.getInstance().player.zChunk;
                 ChunkPos chunk = new ChunkPos(x + playerChunkX, z + playerChunkZ);
                 chunks.add(chunk);
             }
@@ -277,7 +276,7 @@ public class PointRenderer {
 
         {
             for (ChunkPos chunkPos : chunks) {
-                if (!Minecraft.getInstance().world.isChunkGeneratedAt(chunkPos.x, chunkPos.z)) {
+                if (!Minecraft.getInstance().level.isChunkGeneratedAt(chunkPos.x, chunkPos.z)) {
                     continue;
                 }
                 List<List<LootRunPath.LootRunPathLocation>> locationsInChunk = locations.get(ChunkPos.asLong(chunkPos.x, chunkPos.z));
@@ -292,16 +291,16 @@ public class PointRenderer {
                             boolean pauseDraw = false;
                             BlockPos blockPos = loc.getLocation().toBlockPos();
 
-                            World world = Minecraft.getInstance().world;
+                            World world = Minecraft.getInstance().level;
 
                             if (!blockPos.equals(lastBlockPos)) {
                                 BlockPos minPos = new BlockPos(loc.getLocation().x - 0.3D, loc.getLocation().y - 1D, loc.getLocation().z - 0.3D);
                                 BlockPos maxPos = new BlockPos(loc.getLocation().x + 0.3D, loc.getLocation().y - 1D, loc.getLocation().z + 0.3D);
-                                Iterable<BlockPos> blocks = BlockPos.getAllInBox(minPos, maxPos);
+                                Iterable<BlockPos> blocks = BlockPos.betweenClosed(minPos, maxPos);
                                 boolean barrier = false;
                                 boolean validBlock = false;
                                 for (BlockPos blockInArea : blocks) {
-                                    IBlockState blockStateInArea = world.getBlockState(blockInArea);
+                                    BlockState blockStateInArea = world.getBlockState(blockInArea);
                                     if (blockStateInArea.getBlock() == Blocks.BARRIER) {
                                         barrier = true;
                                     } else if (blockStateInArea.getCollisionBoundingBox(world, blockInArea) != null) {
@@ -375,7 +374,7 @@ public class PointRenderer {
     }
 
     public static void drawCube(BlockPos point, CustomColor color) {
-        if (!Minecraft.getInstance().world.isBlockLoaded(point, false)) return;
+        if (!Minecraft.getInstance().level.isBlockLoaded(point, false)) return;
 
         RenderManager renderManager = Minecraft.getInstance().getRenderManager();
 

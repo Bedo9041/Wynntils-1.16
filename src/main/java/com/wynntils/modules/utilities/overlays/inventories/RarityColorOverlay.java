@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.inventories;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.ModCore;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.interfaces.Listener;
@@ -15,16 +16,15 @@ import com.wynntils.core.utils.StringUtils;
 import com.wynntils.core.utils.objects.IntRange;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import com.wynntils.webapi.profiles.item.enums.ItemTier;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.ContainerScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,9 +35,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.Math.PI;
 import static com.mojang.blaze3d.platform.GlStateManager.color;
 import static com.mojang.blaze3d.platform.GlStateManager.glTexEnvi;
+import static java.lang.Math.PI;
 import static net.minecraft.util.math.MathHelper.cos;
 import static net.minecraft.util.math.MathHelper.sin;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -50,20 +50,20 @@ public class RarityColorOverlay implements Listener {
     private static String professionFilter = "-";
 
     @SubscribeEvent
-    public void onChestInventory(GuiOverlapEvent.ChestOverlap.DrawGuiContainerBackgroundLayer e) {
+    public void onChestInventory(GuiOverlapEvent.ChestOverlap.DrawContainerScreenBackgroundLayer e) {
         drawChest(e.getGui(), e.getGui().getLowerInv(), e.getGui().getUpperInv(), true, true);
     }
 
     @SubscribeEvent
-    public void onHorseInventory(GuiOverlapEvent.HorseOverlap.DrawGuiContainerBackgroundLayer e) {
+    public void onHorseInventory(GuiOverlapEvent.HorseOverlap.DrawContainerScreenBackgroundLayer e) {
         drawChest(e.getGui(), e.getGui().getUpperInv(), e.getGui().getLowerInv(), true, false);
     }
 
     @SubscribeEvent
-    public void onPlayerInventory(GuiOverlapEvent.InventoryOverlap.DrawGuiContainerBackgroundLayer e) {
-        GuiContainer guiContainer = e.getGui();
+    public void onPlayerInventory(GuiOverlapEvent.InventoryOverlap.DrawContainerScreenBackgroundLayer e) {
+        ContainerScreen ContainerScreen = e.getGui();
 
-        for (Slot s : guiContainer.inventorySlots.inventorySlots) {
+        for (Slot s : ContainerScreen.inventorySlots.inventorySlots) {
             if (!UtilitiesConfig.Items.INSTANCE.accesoryHighlight && s.slotNumber >= 9 && s.slotNumber <= 12)
                 continue;
             if (!UtilitiesConfig.Items.INSTANCE.hotbarHighlight && s.slotNumber >= 36 && s.slotNumber <= 41)
@@ -73,14 +73,14 @@ public class RarityColorOverlay implements Listener {
             if (!UtilitiesConfig.Items.INSTANCE.mainHighlightInventory && s.slotNumber >= 13 && s.slotNumber <= 35)
                 continue;
 
-            drawItemSlot(guiContainer, false, s);
+            drawItemSlot(ContainerScreen, false, s);
         }
     }
 
-    public static void drawChest(GuiContainer guiContainer, IInventory lowerInv, IInventory upperInv, boolean emeraldsUpperInv, boolean emeraldsLowerInv) {
+    public static void drawChest(ContainerScreen ContainerScreen, IInventory lowerInv, IInventory upperInv, boolean emeraldsUpperInv, boolean emeraldsLowerInv) {
         int playerInvSlotNumber = 0;
 
-        for (Slot s : guiContainer.inventorySlots.inventorySlots) {
+        for (Slot s : ContainerScreen.inventorySlots.inventorySlots) {
             if (s.inventory.getDisplayName().equals(ModCore.mc().player.inventory.getDisplayName())) {
                 playerInvSlotNumber++;
                 if (playerInvSlotNumber <= 4 && playerInvSlotNumber >= 1 && !UtilitiesConfig.Items.INSTANCE.accesoryHighlight)
@@ -94,19 +94,19 @@ public class RarityColorOverlay implements Listener {
                     continue;
             }
 
-            drawItemSlot(guiContainer, true, s);
+            drawItemSlot(ContainerScreen, true, s);
         }
     }
 
-    private static void drawItemSlot(GuiContainer guiContainer, boolean isChest, Slot s) {
-        ItemStack is = s.getStack();
+    private static void drawItemSlot(ContainerScreen ContainerScreen, boolean isChest, Slot s) {
+        ItemStack is = s.getItem();
         String lore = ItemUtils.getStringLore(is);
         String name = StringUtils.normalizeBadString(is.getDisplayName());
 
         // start rendering
-        drawLevelArc(guiContainer, s, ItemUtils.getLevel(lore));
-        drawHighlightColor(guiContainer, s, getHighlightColor(s, is, lore, name, isChest, guiContainer.getSlotUnderMouse()));
-        drawDurabilityArc(guiContainer, s, getDurability(lore));
+        drawLevelArc(ContainerScreen, s, ItemUtils.getLevel(lore));
+        drawHighlightColor(ContainerScreen, s, getHighlightColor(s, is, lore, name, isChest, ContainerScreen.getSlotUnderMouse()));
+        drawDurabilityArc(ContainerScreen, s, getDurability(lore));
     }
 
     private static CustomColor getHighlightColor(Slot s, ItemStack is, String lore, String name, boolean isChest, Slot slotUnderMouse) {
@@ -120,7 +120,7 @@ public class RarityColorOverlay implements Listener {
             if (UtilitiesConfig.Items.INSTANCE.filterEnabled && !professionFilter.equals("-") && lore.contains(professionFilter)) {
                 return new CustomColor(0.078f, 0.35f, 0.8f);
             }
-            if (UtilitiesConfig.Items.INSTANCE.highlightCosmeticDuplicates && slotUnderMouse != null && lore.contains("Reward") && !lore.contains("Raid Reward") && slotUnderMouse.slotNumber != s.slotNumber && slotUnderMouse.getStack().getDisplayName().equals(name)) {
+            if (UtilitiesConfig.Items.INSTANCE.highlightCosmeticDuplicates && slotUnderMouse != null && lore.contains("Reward") && !lore.contains("Raid Reward") && slotUnderMouse.slotNumber != s.slotNumber && slotUnderMouse.getItem().getDisplayName().equals(name)) {
                 return new CustomColor(0f, 1f, 0f);
             }
             if (lore.contains("Reward")) {
@@ -197,12 +197,12 @@ public class RarityColorOverlay implements Listener {
 
     }
 
-    private static void drawDurabilityArc(GuiContainer guiContainer, Slot s, float durability){
+    private static void drawDurabilityArc(ContainerScreen ContainerScreen, Slot s, float durability){
     	if (!UtilitiesConfig.Items.INSTANCE.craftedDurabilityBars) return;
     	if (durability == -1) return;
 
-    	int x = guiContainer.getGuiLeft() + s.xPos;
-        int y = guiContainer.getGuiTop() + s.yPos;
+    	int x = ContainerScreen.getGuiLeft() + s.xPos;
+        int y = ContainerScreen.getGuiTop() + s.yPos;
 
         GlStateManager._disableLighting();
         GlStateManager.disableDepth();
@@ -234,12 +234,12 @@ public class RarityColorOverlay implements Listener {
         Tessellator.getInstance().draw();
     }
 
-    private static void drawLevelArc(GuiContainer guiContainer, Slot s, IntRange level) {
+    private static void drawLevelArc(ContainerScreen ContainerScreen, Slot s, IntRange level) {
         if (!UtilitiesConfig.Items.INSTANCE.itemLevelArc) return;
         if (level == null) return;
 
-        int x = guiContainer.getGuiLeft() + s.xPos;
-        int y = guiContainer.getGuiTop() + s.yPos;
+        int x = ContainerScreen.getGuiLeft() + s.xPos;
+        int y = ContainerScreen.getGuiTop() + s.yPos;
 
         GlStateManager._disableLighting();
         GlStateManager.disableDepth();
@@ -260,11 +260,11 @@ public class RarityColorOverlay implements Listener {
         GlStateManager._enableLighting();
     }
 
-    private static void drawHighlightColor(GuiContainer guiContainer, Slot s, CustomColor colour) {
+    private static void drawHighlightColor(ContainerScreen ContainerScreen, Slot s, CustomColor colour) {
         if (colour == null) return;
 
         ScreenRenderer renderer = new ScreenRenderer();
-        ScreenRenderer.beginGL(guiContainer.getGuiLeft() + s.xPos, guiContainer.getGuiTop() + s.yPos);
+        ScreenRenderer.beginGL(ContainerScreen.getGuiLeft() + s.xPos, ContainerScreen.getGuiTop() + s.yPos);
         {
             color(colour.r, colour.g, colour.b, UtilitiesConfig.Items.INSTANCE.inventoryAlpha / 100);
             glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_BLEND);
@@ -280,7 +280,7 @@ public class RarityColorOverlay implements Listener {
 
     private static boolean isPowder(ItemStack is) {
         return (is.getItem() == Items.DYE && is.hasCustomHoverName() && is.getDisplayName().contains("Powder") &&
-                TextFormatting.getTextWithoutFormattingCodes(ItemUtils.getStringLore(is)).contains("Effect on Weapons"));
+                TextFormatting.stripFormatting(ItemUtils.getStringLore(is)).contains("Effect on Weapons"));
     }
 
     private static int getPowderTier(ItemStack is) {

@@ -4,12 +4,12 @@
 
 package com.wynntils.core.framework.rendering;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
 import com.wynntils.core.framework.rendering.math.MatrixMath;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Random;
 
 public class SpecialRendering {

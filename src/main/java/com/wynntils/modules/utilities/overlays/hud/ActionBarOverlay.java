@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.hud;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.instances.data.ActionBarData;
 import com.wynntils.core.framework.overlays.Overlay;
@@ -14,7 +15,6 @@ import com.wynntils.core.utils.Utils;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import com.wynntils.modules.utilities.configs.OverlayConfig;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -79,7 +79,7 @@ public class ActionBarOverlay extends Overlay {
             String[] spaces = lastActionBar.split(" ");
             middle = spaces[5].replace(TextFormatting.UNDERLINE.toString(), "").replace(TextFormatting.RESET.toString(), "");
             preference = true;
-        } else if (TextFormatting.getTextWithoutFormattingCodes(lastActionBar).contains("Sprint") && ScreenRenderer.mc.player.isSprinting()) {
+        } else if (TextFormatting.stripFormatting(lastActionBar).contains("Sprint") && ScreenRenderer.mc.player.isSprinting()) {
             String[] spaces = lastActionBar.split(" ");
             middle = spaces[5];
         } else if (OverlayConfig.INSTANCE.actionBarCoordinates && !OverlayConfig.INSTANCE.splitCoordinates) {
@@ -101,14 +101,14 @@ public class ActionBarOverlay extends Overlay {
     }
 
     private boolean renderItemName() {
-        int newHighlightTicks = ReflectionFields.GuiIngame_remainingHighlightTicks.getValue(Minecraft.getInstance().ingameGUI);
-        ItemStack newHighlightItem = ReflectionFields.GuiIngame_highlightingItemStack.getValue(Minecraft.getInstance().ingameGUI);
+        int newHighlightTicks = ReflectionFields.GuiIngame_remainingHighlightTicks.getValue(Minecraft.getInstance().gui);
+        ItemStack newHighlightItem = ReflectionFields.GuiIngame_highlightingItemStack.getValue(Minecraft.getInstance().gui);
 
         if (newHighlightTicks > 0) { // update item
             highlightTicks = newHighlightTicks*5; // this method ticks 5 times as fast as the default
             highlightItem = newHighlightItem;
 
-            ReflectionFields.GuiIngame_remainingHighlightTicks.setValue(Minecraft.getInstance().ingameGUI, 0);
+            ReflectionFields.GuiIngame_remainingHighlightTicks.setValue(Minecraft.getInstance().gui, 0);
         } else if (newHighlightItem.isEmpty()) { // clear highlight when player switches to an empty hand
             highlightTicks = 0;
         }

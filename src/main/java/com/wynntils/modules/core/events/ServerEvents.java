@@ -37,6 +37,7 @@ import com.wynntils.webapi.profiles.TerritoryProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.IngameGui;
 import net.minecraft.network.play.server.SPacketSpawnPosition;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ChatType;
@@ -44,6 +45,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -72,11 +74,11 @@ public class ServerEvents implements Listener {
      * @param e Represents the event
      */
     @SubscribeEvent
-    public void joinServer(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":packet_filter", new PacketIncomingFilter());
-        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":outgoingFilter", new PacketOutgoingFilter());
+    public void joinServer(ClientPlayerNetworkEvent.LoggedInEvent e) {
+        e.getNetworkManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":packet_filter", new PacketIncomingFilter());
+        e.getNetworkManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":outgoingFilter", new PacketOutgoingFilter());
 
-        GuiIngame ingameGui = Minecraft.getInstance().ingameGUI;
+        IngameGui ingameGui = Minecraft.getInstance().gui;
         ReflectionFields.GuiIngame_overlayPlayerList.setValue(ingameGui, new PlayerInfoReplacer(Minecraft.getInstance(), ingameGui));
 
         WebManager.tryReloadApiUrls(true);
@@ -143,7 +145,7 @@ public class ServerEvents implements Listener {
         }
         PartyManager.handleMessages(e.getMessage());  // party messages here
 
-        String messageText = e.getMessage().getUnformattedText();
+        String messageText = e.getMessage().getString();
         String formatted = e.getMessage().getFormattedText();
         Matcher m = FRIENDS_LIST.matcher(formatted);
         if (m.find() && m.group(1).equals(Minecraft.getInstance().player.getName())) {
@@ -242,7 +244,7 @@ public class ServerEvents implements Listener {
         if (WebManager.isAthenaOnline()) return;
 
         StringTextComponent msg = new StringTextComponent("The Wynntils servers are currently down! You can still use Wynntils, but some features may not work. Our servers should be back soon.");
-        msg.getStyle().setColor(TextFormatting.RED);
+        msg.getStyle().withColor(TextFormatting.RED);
         msg.getStyle().setBold(true);
         new Delay(() -> Minecraft.getInstance().player.sendMessage(msg), 30); // delay so the player actually loads in
     }
@@ -256,7 +258,7 @@ public class ServerEvents implements Listener {
     @SubscribeEvent
     public void onJoinLobby(WynnClassChangeEvent e) {
         if (!Reference.onServer || !CoreDBConfig.INSTANCE.enableChangelogOnUpdate || !CoreDBConfig.INSTANCE.showChangelogs) return;
-        if (UpdateOverlay.isDownloading() || DownloaderManager.isRestartOnQueueFinish() || Minecraft.getInstance().world == null) return;
+        if (UpdateOverlay.isDownloading() || DownloaderManager.isRestartOnQueueFinish() || Minecraft.getInstance().level == null) return;
         if (e.getNewClass() == ClassType.NONE) return;
 
         synchronized (this) {
@@ -270,7 +272,7 @@ public class ServerEvents implements Listener {
             if (changelog == null) return;
 
             Minecraft.getInstance().submit(() -> {
-                Minecraft.getInstance().displayGuiScreen(new ChangelogUI(changelog, major));
+                Minecraft.getInstance().setScreen(new ChangelogUI(changelog, major));
 
                 // Showed changelog; Don't show next time.
                 CoreDBConfig.INSTANCE.showChangelogs = false;
@@ -351,8 +353,8 @@ public class ServerEvents implements Listener {
                 }
             }
 
-            int chunkX = pl.chunkCoordX;
-            int chunkZ = pl.chunkCoordZ;
+            int chunkX = pl.xChunk;
+            int chunkZ = pl.zChunk;
 
             // housing instances are over these chunk coordinates
             if (chunkX >= 4096 && chunkZ >= 4096) {

@@ -4,9 +4,6 @@
 
 package com.wynntils.modules.utilities.overlays.hud;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.overlays.Overlay;
@@ -14,7 +11,6 @@ import com.wynntils.core.framework.rendering.SmartFontRenderer;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
 import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.modules.utilities.configs.OverlayConfig;
-
 import net.minecraft.network.play.server.SPacketDisplayObjective;
 import net.minecraft.network.play.server.SPacketScoreboardObjective;
 import net.minecraft.network.play.server.SPacketUpdateScore;
@@ -22,6 +18,9 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ObjectivesOverlay extends Overlay {
 
@@ -63,7 +62,7 @@ public class ObjectivesOverlay extends Overlay {
     }
 
     private static Objective parseObjectiveLine(String objectiveLine) {
-        Matcher matcher = OBJECTIVE_PATTERN.matcher(TextFormatting.getTextWithoutFormattingCodes(objectiveLine));
+        Matcher matcher = OBJECTIVE_PATTERN.matcher(TextFormatting.stripFormatting(objectiveLine));
         String goal = null;
         int score = 0;
         int maxScore = 0;
@@ -112,7 +111,7 @@ public class ObjectivesOverlay extends Overlay {
     public static boolean checkObjectiveUpdate(SPacketUpdateScore updateScore) {
         if (updateScore.getObjectiveName().equals(sidebarObjectiveName)) {
             if (updateScore.getScoreAction() == SPacketUpdateScore.Action.REMOVE) {
-                String objectiveLine = TextFormatting.getTextWithoutFormattingCodes(updateScore.getPlayerName());
+                String objectiveLine = TextFormatting.stripFormatting(updateScore.getPlayerName());
                 if (objectiveLine.equals("Objective" + (objectives[1] != null ? "s" : "") + ":") || objectiveLine.equals("Daily Objective" + (objectives[1] != null ? "s" : "") + ":")) {
                     objectivesPosition = 0;
                     return true;
@@ -122,7 +121,7 @@ public class ObjectivesOverlay extends Overlay {
                 return true;
             }
 
-            String text = TextFormatting.getTextWithoutFormattingCodes(updateScore.getPlayerName());
+            String text = TextFormatting.stripFormatting(updateScore.getPlayerName());
             if (text.matches("Objectives?:") || text.matches("Daily Objectives?:")) {
                 objectivesPosition = updateScore.getScoreValue();
                 return true;
@@ -167,7 +166,7 @@ public class ObjectivesOverlay extends Overlay {
     public static void checkObjectiveReached(ClientChatReceivedEvent e) {
         if (e.getType() != ChatType.CHAT) return;
 
-        String msg = e.getMessage().getUnformattedText();
+        String msg = e.getMessage().getString();
         if (msg.contains("Click here to claim your rewards")) {
             objectives[0] = new Objective("Claim your reward with /daily");
         }

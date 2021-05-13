@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.inventories;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.instances.PlayerInfo;
@@ -12,7 +13,6 @@ import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.container.Slot;
 import net.minecraftforge.eventbus.api.EventPriority;

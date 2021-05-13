@@ -103,7 +103,7 @@ public class CommandLocate extends CommandBase implements IClientCommand {
 
             ITextComponent startingPointMsg = new StringTextComponent(mmp.getTranslatedName() + " is located at [" +
                     mmp.getX() + ", " + mmp.getZ() + "] (" + (int) distance + " blocks)");
-            startingPointMsg.getStyle().setColor(GRAY);
+            startingPointMsg.getStyle().withColor(GRAY);
             sender.sendMessage(startingPointMsg);
             numPrinted++;
             if (numPrinted >= 3) break;

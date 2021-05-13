@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.overlays.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.ModCore;
 import com.wynntils.core.framework.enums.SkillPoint;
 import com.wynntils.core.framework.instances.PlayerInfo;
@@ -17,16 +18,15 @@ import com.wynntils.modules.utilities.overlays.inventories.SkillPointOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.Screen;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.item.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
 
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class SkillPointLoadoutUI extends FakeGuiContainer {
+public class SkillPointLoadoutUI extends FakeContainerScreen {
 
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
@@ -53,8 +53,8 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         inventory.clear();
 
         int i = 0;
@@ -96,10 +96,10 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
 
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        if (slotIn == null || slotIn.getStack().isEmpty()) return;
+        if (slotIn == null || slotIn.getItem().isEmpty()) return;
         if (slotId >= UtilitiesConfig.INSTANCE.skillPointLoadouts.size()) return;
 
-        String name = TextFormatting.getTextWithoutFormattingCodes(slotIn.getStack().getDisplayName());
+        String name = TextFormatting.stripFormatting(slotIn.getItem().getDisplayName());
         if (mouseButton == 0) { // left click <-> load
             SkillPointAllocation aloc = getLoadout(name);
             if (aloc == null) return;
@@ -109,30 +109,30 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
 
             parent.loadBuild(aloc); // sends the allocated loadout into
 
-            ModCore.mc().displayGuiScreen(spMenu);
+            ModCore.mc().setScreen(spMenu);
             return;
         }
 
         if (mouseButton == 1) { // right click <-> delete
-            List<String> lore = ItemUtils.getLore(slotIn.getStack());
+            List<String> lore = ItemUtils.getLore(slotIn.getItem());
             if (lore.get(lore.size() - 1).contains("confirm")) { // confirm deletion
                 Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.ENTITY_IRONGOLEM_HURT, 1f));
 
                 removeLoadout(name);
-                this.initGui();
+                this.init();
                 return;
             }
 
             Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.BLOCK_ANVIL_LAND, 1f));
             lore.set(lore.size() -1, TextFormatting.DARK_RED + "> Right-click to confirm deletion");
-            ItemUtils.replaceLore(slotIn.getStack(), lore);
+            ItemUtils.replaceLore(slotIn.getItem(), lore);
         }
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == ModCore.mc().options.keyBindInventory.getKeyCode()) {
-            ModCore.mc().displayGuiScreen(spMenu);
+            ModCore.mc().setScreen(spMenu);
         }
     }
 
@@ -144,12 +144,12 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        this.font.drawString(this.inventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
+    protected void drawContainerScreenForegroundLayer(int mouseX, int mouseY) {
+        this.font.drawString(this.inventory.getDisplayName().getString(), 8, 6, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawContainerScreenBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bind(CHEST_GUI_TEXTURE);
         int i = (this.width - this.xSize) / 2;
@@ -160,7 +160,7 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
 
     private static SkillPointAllocation getLoadout(String name) {
         for (Entry<String, SkillPointAllocation> e : UtilitiesConfig.INSTANCE.skillPointLoadouts.entrySet()) {
-            if (TextFormatting.getTextWithoutFormattingCodes(e.getKey()).equals(name))
+            if (TextFormatting.stripFormatting(e.getKey()).equals(name))
                 return e.getValue();
         }
         return null;
@@ -168,7 +168,7 @@ public class SkillPointLoadoutUI extends FakeGuiContainer {
 
     private static void removeLoadout(String name) {
         for (Entry<String, SkillPointAllocation> e : UtilitiesConfig.INSTANCE.skillPointLoadouts.entrySet()) {
-            if (TextFormatting.getTextWithoutFormattingCodes(e.getKey()).equals(name)) {
+            if (TextFormatting.stripFormatting(e.getKey()).equals(name)) {
                 UtilitiesConfig.INSTANCE.skillPointLoadouts.remove(e.getKey());
                 UtilitiesConfig.INSTANCE.saveSettings(UtilitiesModule.getModule());
                 return;

@@ -17,9 +17,9 @@ import com.wynntils.modules.richpresence.configs.RichPresenceConfig;
 import com.wynntils.modules.utilities.overlays.hud.WarTimerOverlay;
 import com.wynntils.modules.utilities.overlays.hud.WarTimerOverlay.WarStage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.play.server.SPacketSetExperience;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.network.play.server.SSetExperiencePacket;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -43,7 +43,7 @@ public class ServerEvents implements Listener {
 
     @SubscribeEvent
     public void onServerJoin(WynncraftServerEvent.Login e) {
-        if (!ModCore.mc().isSingleplayer() && ModCore.mc().getCurrentServerData() != null && Objects.requireNonNull(ModCore.mc().getCurrentServerData()).serverIP.contains("wynncraft") && RichPresenceConfig.INSTANCE.enableRichPresence) {
+        if (!ModCore.mc().isLocalServer() && ModCore.mc().getCurrentServer() != null && Objects.requireNonNull(ModCore.mc().getCurrentServer()).ip.contains("wynncraft") && RichPresenceConfig.INSTANCE.enableRichPresence) {
             String state = "In Lobby";
             RichPresenceModule.getModule().getRichPresence().updateRichPresence(state, null, null, OffsetDateTime.now());
         }
@@ -100,11 +100,11 @@ public class ServerEvents implements Listener {
     }
 
     @SubscribeEvent
-    public void onLevelChange(PacketEvent<SPacketSetExperience> e) {
+    public void onLevelChange(PacketEvent<SSetExperiencePacket> e) {
         if (!RichPresenceConfig.INSTANCE.enableRichPresence || !Reference.onWorld
                 || !PlayerInfo.get(CharacterData.class).isLoaded()) return;
 
-        if (e.getPacket().getLevel() != Minecraft.getInstance().player.experienceLevel) {
+        if (e.getPacket().getExperienceLevel() != Minecraft.getInstance().player.experienceLevel) {
             forceUpdate = true;
         }
     }

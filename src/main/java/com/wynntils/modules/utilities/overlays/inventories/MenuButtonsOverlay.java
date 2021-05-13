@@ -21,7 +21,7 @@ import java.util.List;
 public class MenuButtonsOverlay implements Listener {
 
     @SubscribeEvent
-    public void initGui(GuiOverlapEvent.IngameMenuOverlap.InitGui e) {
+    public void init(GuiOverlapEvent.IngameMenuOverlap.InitGui e) {
         if (!Reference.onServer) return;
 
         int numButtonRows = 0;
@@ -102,7 +102,7 @@ public class MenuButtonsOverlay implements Listener {
                 Minecraft.getInstance().player.chat("/hub");
                 break;
             case 755:
-                Minecraft.getInstance().displayGuiScreen(SettingsUI.getInstance(Minecraft.getInstance().screen));
+                Minecraft.getInstance().setScreen(SettingsUI.getInstance(Minecraft.getInstance().screen));
                 break;
             case 756:
                 QuestBookPages.MAIN.getPage().open(true);

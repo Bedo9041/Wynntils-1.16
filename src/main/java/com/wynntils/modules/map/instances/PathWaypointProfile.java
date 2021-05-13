@@ -43,7 +43,7 @@ public class PathWaypointProfile {
         this.name = name == null ? "Path" : name;
         this.isCircular = isCircular;
         this.isEnabled = isEnabled;
-        setColor(color);
+        withColor(color);
         this.points = points == null ? new ArrayList<>() : new ArrayList<>(points);
         recalculateBounds();
     }
@@ -151,7 +151,7 @@ public class PathWaypointProfile {
         return color;
     }
 
-    public PathWaypointProfile setColor(CustomColor color) {
+    public PathWaypointProfile withColor(CustomColor color) {
         if (color == null) return this;
         this.color = new CustomColor(color);
         return this;

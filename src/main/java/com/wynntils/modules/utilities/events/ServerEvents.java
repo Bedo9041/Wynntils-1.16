@@ -13,17 +13,18 @@ import com.wynntils.core.events.custom.WynncraftServerEvent;
 import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import com.wynntils.modules.utilities.managers.*;
-import net.minecraft.network.play.client.CPacketResourcePackStatus;
-import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.network.play.server.SPacketResourcePackSend;
-import net.minecraft.network.play.server.SPacketSpawnObject;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraft.network.play.client.CResourcePackStatusPacket;
+import net.minecraft.network.play.client.CUseEntityPacket;
+import net.minecraft.network.play.server.SSendResourcePackPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.lwjgl.opengl.Display;
 
 public class ServerEvents implements Listener {
 
+    // TODO: MC Version not in ForgeVersion. Hardcode?
     private static String oldWindowTitle = "Minecraft " + ForgeVersion.mcVersion;
 
     @SubscribeEvent
@@ -70,22 +71,22 @@ public class ServerEvents implements Listener {
     }
 
     @SubscribeEvent
-    public void onResourcePackReceive(PacketEvent<SPacketResourcePackSend> e) {
+    public void onResourcePackReceive(PacketEvent<SSendResourcePackPacket> e) {
         if (!ServerResourcePackManager.shouldCancelResourcePackLoad(e.getPacket())) return;
 
-        e.getPlayClient().sendPacket(new CPacketResourcePackStatus(CPacketResourcePackStatus.Action.ACCEPTED));
-        e.getPlayClient().sendPacket(new CPacketResourcePackStatus(CPacketResourcePackStatus.Action.SUCCESSFULLY_LOADED));
+        e.getPlayClient().send(new CResourcePackStatusPacket(CResourcePackStatusPacket.Action.ACCEPTED));
+        e.getPlayClient().send(new CResourcePackStatusPacket(CResourcePackStatusPacket.Action.SUCCESSFULLY_LOADED));
 
         e.setCanceled(true);
     }
 
     @SubscribeEvent
-    public void onSpawnObject(PacketEvent<SPacketSpawnObject> e) {
+    public void onSpawnObject(PacketEvent<SSpawnObjectPacket> e) {
         if (WarManager.filterMob(e)) e.setCanceled(true);
     }
 
     @SubscribeEvent
-    public void onClickEntity(PacketEvent<CPacketUseEntity> e) {
+    public void onClickEntity(PacketEvent<CUseEntityPacket> e) {
         if (WarManager.allowClick(e)) e.setCanceled(true);
     }
 

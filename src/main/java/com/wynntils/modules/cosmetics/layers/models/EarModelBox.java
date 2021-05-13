@@ -4,10 +4,10 @@
 
 package com.wynntils.modules.cosmetics.layers.models;
 
+import net.minecraft.client.model.*;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.client.model.*;
 
 public class EarModelBox extends ModelBox {
 

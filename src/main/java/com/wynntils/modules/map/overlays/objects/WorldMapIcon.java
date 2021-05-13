@@ -4,11 +4,11 @@
 
 package com.wynntils.modules.map.overlays.objects;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.SmartFontRenderer;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.modules.map.instances.MapProfile;
-import com.mojang.blaze3d.platform.GlStateManager;
 
 public class WorldMapIcon {
 

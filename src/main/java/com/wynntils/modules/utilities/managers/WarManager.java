@@ -9,10 +9,10 @@ import com.wynntils.core.events.custom.PacketEvent;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.network.play.server.SPacketSpawnObject;
+import net.minecraft.network.play.client.CUseEntityPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 
 public class WarManager {
 
@@ -23,7 +23,7 @@ public class WarManager {
      * @param e the packet spawn event
      * @return if the mob should be filtered out
      */
-    public static boolean filterMob(PacketEvent<SPacketSpawnObject> e) {
+    public static boolean filterMob(PacketEvent<SSpawnObjectPacket> e) {
         if (!UtilitiesConfig.Wars.INSTANCE.allowEntityFilter || !Reference.onWars) return false;
 
         return e.getPacket().getType() == 78;
@@ -36,11 +36,11 @@ public class WarManager {
      * @param e the packet use entity event
      * @return if the click should be allowed
      */
-    public static boolean allowClick(PacketEvent<CPacketUseEntity> e) {
+    public static boolean allowClick(PacketEvent<CUseEntityPacket> e) {
         if (!UtilitiesConfig.Wars.INSTANCE.blockWorkstations || !Reference.onWars) return false;
 
-        Entity in = e.getPacket().getEntityFromWorld(Minecraft.getInstance().world);
-        return in instanceof EntityArmorStand || in instanceof EntitySlime;
+        Entity in = e.getPacket().getEntityFromWorld(Minecraft.getInstance().level);
+        return in instanceof ArmorStandEntity || in instanceof EntitySlime;
     }
 
 }

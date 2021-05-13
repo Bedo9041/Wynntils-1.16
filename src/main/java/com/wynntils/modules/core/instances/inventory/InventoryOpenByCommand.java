@@ -7,7 +7,7 @@ package com.wynntils.modules.core.instances.inventory;
 import com.wynntils.modules.core.interfaces.IInventoryOpenAction;
 import com.wynntils.modules.core.managers.PacketQueue;
 import net.minecraft.network.play.client.CPacketChatMessage;
-import net.minecraft.network.play.server.SPacketOpenWindow;
+import net.minecraft.network.play.server.SOpenWindowPacket;
 
 public class InventoryOpenByCommand implements IInventoryOpenAction {
 
@@ -19,7 +19,7 @@ public class InventoryOpenByCommand implements IInventoryOpenAction {
 
     @Override
     public void onOpen(FakeInventory inv, Runnable onDrop) {
-        PacketQueue.queueComplexPacket(new CPacketChatMessage(inputCommand), SPacketOpenWindow.class).onDrop(onDrop);
+        PacketQueue.queueComplexPacket(new CPacketChatMessage(inputCommand), SOpenWindowPacket.class).onDrop(onDrop);
     }
 
 }

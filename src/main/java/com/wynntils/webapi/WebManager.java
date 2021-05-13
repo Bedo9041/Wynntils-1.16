@@ -26,13 +26,11 @@ import com.wynntils.webapi.profiles.music.MusicLocationsProfile;
 import com.wynntils.webapi.profiles.player.PlayerStatsProfile;
 import com.wynntils.webapi.request.Request;
 import com.wynntils.webapi.request.RequestHandler;
-import net.minecraftforge.fml.common.ProgressManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,12 +102,12 @@ public class WebManager {
             tryReloadApiUrls(false, true);
         }
 
-        ProgressManager.ProgressBar progressBar;
-        if (withProgress) {
-            progressBar = ProgressManager.push("Loading data from " + (apiUrls != null ? "APIs" : "cache"), 0);
-        } else {
-            progressBar = null;
-        }
+//        ProgressManager.ProgressBar progressBar;
+//        if (withProgress) {
+//            progressBar = ProgressManager.push("Loading data from " + (apiUrls != null ? "APIs" : "cache"), 0);
+//        } else {
+//            progressBar = null;
+//        }
 
         updateTerritories(handler);
         updateItemList(handler);
@@ -122,9 +120,9 @@ public class WebManager {
 
         handler.dispatchAsync();
 
-        if (progressBar != null) {
-            ProgressManager.pop(progressBar);
-        }
+//        if (progressBar != null) {
+//            ProgressManager.pop(progressBar);
+//        }
 
         if (isAthenaOnline())
             updateTerritoryThreadStatus(true);
@@ -523,7 +521,7 @@ public class WebManager {
 
     public static void updatePlayerProfile(RequestHandler handler) {
         if (apiUrls == null) return;
-        String url = apiUrls.get("PlayerStatsv2") + ModCore.mc().getSession().getProfile().getId() + "/stats";
+        String url = apiUrls.get("PlayerStatsv2") + ModCore.mc().getUser().getUuid() + "/stats";
         handler.addRequest(new Request(url, "player_profile")
             .cacheTo(new File(API_CACHE_ROOT, "player_stats.json"))
             .addHeader("apikey", apiUrls.get("WynnApiKey"))

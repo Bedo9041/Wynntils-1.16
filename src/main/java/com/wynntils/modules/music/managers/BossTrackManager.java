@@ -23,10 +23,10 @@ public class BossTrackManager {
     private static QueuedTrack previousTrack = null;
 
     public static void update() {
-        for (Entity i : Minecraft.getInstance().world.loadedEntityList) {
+        for (Entity i : Minecraft.getInstance().level.loadedEntityList) {
             if (!i.hasCustomName()) continue;
 
-            Matcher m = MOB_NAMETAG.matcher(TextFormatting.getTextWithoutFormattingCodes(i.getCustomNameTag()));
+            Matcher m = MOB_NAMETAG.matcher(TextFormatting.stripFormatting(i.getCustomNameTag()));
             if (!m.matches()) continue;
             if (checkEntity(i, m.group(1))) return;
         }
@@ -34,8 +34,8 @@ public class BossTrackManager {
         if (bossEntityId == -1) return;
 
         // check if the boss is still alive
-        Entity in = Minecraft.getInstance().world.getEntityByID(bossEntityId);
-        if (in != null && Math.abs(Minecraft.getInstance().player.posY - in.posY) <= 15) return;
+        Entity in = Minecraft.getInstance().level.getEntity(bossEntityId);
+        if (in != null && Math.abs(Minecraft.getInstance().player.getY() - in.posY) <= 15) return;
 
         // grace period for bosses that have multiple phases (somewhat a transition)
         if (gracePeriod == -1) gracePeriod = System.currentTimeMillis() + 3000;
@@ -58,9 +58,9 @@ public class BossTrackManager {
 
     private static boolean checkEntity(Entity entity, String name) {
         String soundTrack = WebManager.getMusicLocations().getBossTrack(name);
-        if (soundTrack == null || Math.abs(Minecraft.getInstance().player.posY - entity.posY) >= 15) return false;
+        if (soundTrack == null || Math.abs(Minecraft.getInstance().player.getY() - entity.posY) >= 15) return false;
 
-        bossEntityId = entity.getEntityId();
+        bossEntityId = entity.getId();
         gracePeriod = -1;
 
         QueuedTrack previous = SoundTrackManager.getCurrentSong();

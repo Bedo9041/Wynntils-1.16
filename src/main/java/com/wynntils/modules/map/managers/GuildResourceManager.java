@@ -7,7 +7,7 @@ package com.wynntils.modules.map.managers;
 import com.wynntils.modules.map.instances.GuildResourceContainer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.network.play.server.SPacketAdvancementInfo;
+import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.util.StringUtils;
 
 import java.util.HashMap;
@@ -20,13 +20,13 @@ public class GuildResourceManager {
      * Proccess the advancement packet into resource containers
      * @param info the input packet
      */
-    public static void processAdvancements(SPacketAdvancementInfo info) {
-        if (info.getAdvancementsToAdd().isEmpty()) return;
+    public static void processAdvancements(SAdvancementInfoPacket info) {
+        if (info.getAdded().isEmpty()) return;
 
-        for (Advancement.Builder advancement : info.getAdvancementsToAdd().values()) {
+        for (Advancement.Builder advancement : info.getAdded().values()) {
             Advancement built = advancement.build(null);
 
-            String territoryName = built.getDisplayText().getUnformattedText().replace("[", "")
+            String territoryName = built.getDisplayText().getString().replace("[", "")
                     .replace("]", "");
             // the territory name has a shit ton of spaces at the end to make the advancement box bigger
             while (territoryName.endsWith(" ")) {
@@ -42,7 +42,7 @@ public class GuildResourceManager {
             // description is literaly a raw string with \n so we have to split
             // the text component also didn't parse the colors corrently so we can't use the unformatted text
             // no clue why although.
-            String description = built.getDisplay().getDescription().getUnformattedText();
+            String description = built.getDisplay().getDescription().getString();
             String[] colored = description.split("\n");
             String[] raw = StringUtils.stripControlCodes(description).split("\n");
 

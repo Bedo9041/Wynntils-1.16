@@ -5,8 +5,8 @@
 package com.wynntils.modules.utilities.instances;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 
 public class ContainerBuilds extends Container {

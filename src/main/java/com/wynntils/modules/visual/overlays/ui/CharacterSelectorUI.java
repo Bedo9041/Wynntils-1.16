@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.visual.overlays.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.enums.CharacterGameMode;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.SmartFontRenderer;
@@ -20,13 +21,12 @@ import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
@@ -36,7 +36,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.mojang.blaze3d.platform.GlStateManager.*;
+import static com.mojang.blaze3d.platform.GlStateManager._disableBlend;
+import static com.mojang.blaze3d.platform.GlStateManager._enableBlend;
 
 public class CharacterSelectorUI extends Screen {
 
@@ -134,7 +135,7 @@ public class CharacterSelectorUI extends Screen {
                         CharacterProfile profile = availableCharacters.get(i);
 
                         drawCharacterBadge(3, posY,
-                                profile.getStack(),
+                                profile.getItem(),
                                 profile.getClassName(),
                                 "Level " + profile.getLevel(),
                                 profile.getDeletion(),
@@ -286,17 +287,17 @@ public class CharacterSelectorUI extends Screen {
         if (receivedItems) return;
 
         for (Slot s : chest.inventorySlots.inventorySlots) {
-            ItemStack stack = s.getStack();
+            ItemStack stack = s.getItem();
             if (stack.isEmpty() || !stack.hasCustomHoverName()) continue;
 
-            String displayName = stack.getDisplayName();
+            String displayName = stack.getDisplayName().getString();
             if (displayName.contains("Create a new character")) {
                 createCharacterSlot = s.slotNumber;
                 receivedItems = true;
                 continue;
             }
 
-            if (!TextFormatting.getTextWithoutFormattingCodes(displayName).matches("\\[>\\] Select [a-zA-Z0-9_ ]+") && !displayName.contains("Deleting")) continue;
+            if (!TextFormatting.stripFormatting(displayName).matches("\\[>\\] Select [a-zA-Z0-9_ ]+") && !displayName.contains("Deleting")) continue;
 
             receivedItems = true;
             availableCharacters.add(new CharacterProfile(stack, s.slotNumber));

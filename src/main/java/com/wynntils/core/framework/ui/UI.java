@@ -4,6 +4,7 @@
 
 package com.wynntils.core.framework.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.enums.MouseButton;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.textures.Textures;
@@ -13,8 +14,6 @@ import com.wynntils.core.framework.ui.elements.UIEList;
 import com.wynntils.core.framework.ui.elements.UIETextBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.io.IOException;
@@ -64,7 +63,7 @@ public abstract class UI extends Screen {
         for (UIElement uie : UIElements)
             uie.tick(ticks);
     }
-    @Override public void initGui() { if (!initiated) { initiated = true; onInit(); } onWindowUpdate(); }
+    @Override public void init() { if (!initiated) { initiated = true; onInit(); } onWindowUpdate(); }
     @Override public void onGuiClosed() {onClose();}
 
     @Override
@@ -151,7 +150,7 @@ public abstract class UI extends Screen {
 
     public void show() {
         setupUI(this);
-        Minecraft.getInstance().displayGuiScreen(this);
+        Minecraft.getInstance().setScreen(this);
     }
 
     public static abstract class CommonUIFeatures {

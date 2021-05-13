@@ -21,7 +21,6 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 public class MainPage extends QuestBookPage {
 
@@ -30,8 +29,8 @@ public class MainPage extends QuestBookPage {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         pages = (int) Math.ceil(Arrays.stream(QuestBookPages.values()).max(Comparator.comparingInt(QuestBookPages::getSlotNb)).get().getSlotNb() / 4d);
         refreshAccepts();
     }

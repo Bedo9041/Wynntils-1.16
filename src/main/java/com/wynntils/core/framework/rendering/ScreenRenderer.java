@@ -4,15 +4,15 @@
 
 package com.wynntils.core.framework.rendering;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
 import com.wynntils.core.framework.rendering.textures.Texture;
 import com.wynntils.core.utils.StringUtils;
 import com.wynntils.modules.core.config.CoreDBConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.MainWindow;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 

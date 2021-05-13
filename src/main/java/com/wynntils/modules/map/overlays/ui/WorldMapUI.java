@@ -29,7 +29,7 @@ import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
@@ -82,7 +82,7 @@ public class WorldMapUI extends GuiMovementScreen {
     protected float outsideTextOpacity = 0f;
 
     protected WorldMapUI() {
-        this((float) Minecraft.getInstance().player.posX, (float) Minecraft.getInstance().player.posZ);
+        this((float) Minecraft.getInstance().player.getX(), (float) Minecraft.getInstance().player.getZ());
     }
 
     protected WorldMapUI(float startX, float startZ) {
@@ -179,8 +179,8 @@ public class WorldMapUI extends GuiMovementScreen {
     }
 
     protected void updateCenterPositionWithPlayerPosition() {
-        float newX = (float) mc.player.posX;
-        float newZ = (float) mc.player.posZ;
+        float newX = (float) mc.player.getX();
+        float newZ = (float) mc.player.getZ();
         if (newX == centerPositionX && newZ == centerPositionZ) return;
         updateCenterPosition(newX, newZ);
     }
@@ -313,8 +313,8 @@ public class WorldMapUI extends GuiMovementScreen {
 
         if (needToReset[0]) resetAllIcons();
 
-        float playerPositionX = (map.getTextureXPosition(mc.player.posX) - minX) / (maxX - minX);
-        float playerPositionZ = (map.getTextureZPosition(mc.player.posZ) - minZ) / (maxZ - minZ);
+        float playerPositionX = (map.getTextureXPosition(mc.player.getX()) - minX) / (maxX - minX);
+        float playerPositionZ = (map.getTextureZPosition(mc.player.getZ()) - minZ) / (maxZ - minZ);
 
         if (playerPositionX > 0 && playerPositionX < 1 && playerPositionZ > 0 && playerPositionZ < 1) {  // <--- player position
             playerPositionX = width * playerPositionX;
@@ -337,7 +337,7 @@ public class WorldMapUI extends GuiMovementScreen {
             _popMatrix();
         }
 
-        if (MapConfig.WorldMap.INSTANCE.keepTerritoryVisible || Keyboard.isKeyDown(GLFW.GLFW_KEY_LCONTROL) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RCONTROL)) {
+        if (MapConfig.WorldMap.INSTANCE.keepTerritoryVisible || Keyboard.isDown(GLFW.GLFW_KEY_LCONTROL) || Keyboard.isDown(GLFW.GLFW_KEY_RCONTROL)) {
             territories.values().forEach(c -> c.drawScreen(mouseX, mouseY, partialTicks,
                     MapConfig.WorldMap.INSTANCE.territoryArea, false, false, true));
         }
@@ -422,8 +422,8 @@ public class WorldMapUI extends GuiMovementScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         updateCenterPosition(centerPositionX, centerPositionZ);
         Keyboard.enableRepeatEvents(true);

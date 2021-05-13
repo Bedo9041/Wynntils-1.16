@@ -4,14 +4,14 @@
 
 package com.wynntils.modules.cosmetics.layers.models;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -78,7 +78,7 @@ public class CustomElytraModel extends ModelBase {
             float f4 = 1.0F;
 
             if (entityIn.motionY < 0.0D) {
-                Vec3d vec3d = (new Vec3d(entityIn.motionX, entityIn.motionY, entityIn.motionZ)).normalize();
+                Vector3d vec3d = (new Vector3d(entityIn.motionX, entityIn.motionY, entityIn.motionZ)).normalize();
                 f4 = 1.0F - (float)Math.pow(-vec3d.y, 1.5D);
             }
 

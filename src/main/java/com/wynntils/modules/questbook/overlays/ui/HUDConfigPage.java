@@ -23,7 +23,7 @@ public class HUDConfigPage extends QuestBookPage {
     public void open(boolean showAnimation) {
         OverlayPositionsUI ui = new OverlayPositionsUI(ModCore.mc().screen);
         UI.setupUI(ui);
-        ModCore.mc().displayGuiScreen(ui);
+        ModCore.mc().setScreen(ui);
     }
 
     @Override

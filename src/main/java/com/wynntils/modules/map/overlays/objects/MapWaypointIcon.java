@@ -148,7 +148,7 @@ public class MapWaypointIcon extends MapTextureIcon {
         // TODO: Find a better solution to detect whether icon is being drawn on minimap
         if (MapConfig.Waypoints.INSTANCE.iconFade && Minecraft.getInstance().screen == null) {
             // If negative the waypoint is above the player
-            distancePlayerWp = (int) (Minecraft.getInstance().player.posY - wp.getY());
+            distancePlayerWp = (int) (Minecraft.getInstance().player.getY() - wp.getY());
 
             if (MathHelper.abs(distancePlayerWp) > MapConfig.Waypoints.INSTANCE.iconFadeScale) return;
             percentage = (float) ((1 - (MathHelper.abs(distancePlayerWp) / (float) MapConfig.Waypoints.INSTANCE.iconFadeScale)) * 0.8 + 0.2);

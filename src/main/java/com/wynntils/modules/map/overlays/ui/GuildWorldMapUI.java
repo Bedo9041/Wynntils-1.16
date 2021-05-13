@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.map.overlays.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.textures.Textures;
@@ -16,11 +17,9 @@ import com.wynntils.modules.map.overlays.enums.MapButtonType;
 import com.wynntils.modules.map.overlays.objects.MapTerritory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -43,12 +42,12 @@ public class GuildWorldMapUI extends WorldMapUI {
     private boolean showTradeRoutes = true;
 
     public GuildWorldMapUI() {
-        super((float) Minecraft.getInstance().player.posX, (float) Minecraft.getInstance().player.posZ);
+        super((float) Minecraft.getInstance().player.getX(), (float) Minecraft.getInstance().player.getZ());
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         this.mapButtons.clear();
 
@@ -85,7 +84,7 @@ public class GuildWorldMapUI extends WorldMapUI {
 
         // HeyZeer0: This close the map if the user was pressing the map key and after a moment dropped it
         if (holdingMapKey && !isHoldingMapKey()) {
-            Minecraft.getInstance().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             return;
         }
 
@@ -116,8 +115,8 @@ public class GuildWorldMapUI extends WorldMapUI {
 
         float scale = getScaleFactor();
 
-        float playerPositionX = (map.getTextureXPosition(mc.player.posX) - minX) / (maxX - minX);
-        float playerPositionZ = (map.getTextureZPosition(mc.player.posZ) - minZ) / (maxZ - minZ);
+        float playerPositionX = (map.getTextureXPosition(mc.player.getX()) - minX) / (maxX - minX);
+        float playerPositionZ = (map.getTextureZPosition(mc.player.getZ()) - minZ) / (maxZ - minZ);
 
         if (playerPositionX > 0 && playerPositionX < 1 && playerPositionZ > 0 && playerPositionZ < 1) {  // <--- player position
             playerPositionX = width * playerPositionX;
@@ -206,13 +205,13 @@ public class GuildWorldMapUI extends WorldMapUI {
             return Mouse.isButtonDown(mapKey + 100);
         }
 
-        return Keyboard.isKeyDown(mapKey);
+        return Keyboard.isDown(mapKey);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (!holdingMapKey && keyCode == MapModule.getModule().getGuildMapKey().getKeyBinding().getKeyCode()) {
-            Minecraft.getInstance().displayGuiScreen(null);
+            Minecraft.getInstance().setScreen(null);
             return;
         }
 

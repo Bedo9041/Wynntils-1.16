@@ -17,7 +17,8 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mojang.blaze3d.platform.GlStateManager.*;
+import static com.mojang.blaze3d.platform.GlStateManager._popMatrix;
+import static com.mojang.blaze3d.platform.GlStateManager._pushMatrix;
 
 public class TerritoryInfoUI {
 

@@ -19,8 +19,8 @@ public class LongPress {
         return endTime != 0 && System.currentTimeMillis() >= endTime;
     }
 
-    public void tick(boolean isKeyDown) {
-        if (!isKeyDown) {
+    public void tick(boolean isDown) {
+        if (!isDown) {
             endTime = 0;
             return;
         }

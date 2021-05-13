@@ -16,8 +16,8 @@ import com.wynntils.modules.utilities.instances.IdentificationHolder;
 import com.wynntils.modules.utilities.overlays.inventories.ItemIdentificationOverlay;
 import com.wynntils.webapi.profiles.item.enums.IdentificationModifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -59,8 +59,8 @@ public class ConsumableTimerOverlay extends Overlay {
         if (stack.getItem() != Items.DIAMOND_AXE && stack.getItem() != Items.POTIONITEM && stack.getItem() != Items.SPLASH_POTION) return; // foods and scrolls have DIAMOND_AXE as their items
 
         // vanilla potions needs a special verification, they DON'T start with dark aqua
-        if (!stack.getDisplayName().startsWith(DARK_AQUA.toString())) {
-            String displayName = TextFormatting.getTextWithoutFormattingCodes(stack.getDisplayName());
+        if (!stack.getDisplayName().getString().startsWith(DARK_AQUA.toString())) {
+            String displayName = TextFormatting.stripFormatting(stack.getDisplayName().getString());
             SkillPoint sp = SkillPoint.findSkillPoint(displayName);
 
             ConsumableContainer consumable;
@@ -76,7 +76,7 @@ public class ConsumableTimerOverlay extends Overlay {
 
             List<String> itemLore = ItemUtils.getLore(stack);
             for (String line : itemLore) {
-                line = TextFormatting.getTextWithoutFormattingCodes(line);
+                line = TextFormatting.stripFormatting(line);
 
                 // duration | - Duration: <group1> Seconds
                 Matcher m = DURATION_PATTERN.matcher(line);
@@ -131,7 +131,7 @@ public class ConsumableTimerOverlay extends Overlay {
 
         List<String> itemLore = ItemUtils.getLore(stack);
         for (String line : itemLore) {
-            line = TextFormatting.getTextWithoutFormattingCodes(line); // remove colors
+            line = TextFormatting.stripFormatting(line); // remove colors
 
             // duration | - Duration: <group1> Seconds
             Matcher m = DURATION_PATTERN.matcher(line);

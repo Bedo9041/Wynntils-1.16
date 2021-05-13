@@ -4,8 +4,29 @@
 
 package com.wynntils.modules.utilities.managers;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.wynntils.ModCore;
+import com.wynntils.Reference;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -17,28 +38,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-
-import com.wynntils.ModCore;
-import com.wynntils.Reference;
-
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-
 public class ItemScreenshotManager {
 
     private static Pattern ITEM_PATTERN = Pattern.compile("(Normal|Set|Unique|Rare|Legendary|Fabled|Mythic) Item.*");
@@ -46,14 +45,14 @@ public class ItemScreenshotManager {
     public static void takeScreenshot() {
         if (!Reference.onWorld) return;
         Screen gui = ModCore.mc().screen;
-        if (!(gui instanceof GuiContainer)) return;
+        if (!(gui instanceof ContainerScreen)) return;
 
-        Slot slot = ((GuiContainer) gui).getSlotUnderMouse();
-        if (slot == null || !slot.getHasStack()) return;
-        ItemStack stack = slot.getStack();
+        Slot slot = ((ContainerScreen) gui).getSlotUnderMouse();
+        if (slot == null || !slot.hasItem()) return;
+        ItemStack stack = slot.getItem();
         if (!stack.hasCustomHoverName()) return;
 
-        List<String> tooltip = stack.getTooltip(ModCore.mc().player, ITooltipFlag.TooltipFlags.NORMAL);
+        List<ITextComponent> tooltip = stack.getTooltipLines(ModCore.mc().player, ITooltipFlag.TooltipFlags.NORMAL);
         removeItemLore(tooltip);
 
         FontRenderer fr = ModCore.mc().font;
@@ -104,7 +103,7 @@ public class ItemScreenshotManager {
         ClipboardImage ci = new ClipboardImage(bi);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ci, null);
 
-        ModCore.mc().player.sendMessage(new StringTextComponent(TextFormatting.GREEN + "Copied " + stack.getDisplayName() + TextFormatting.GREEN + " to the clipboard!"));
+        ModCore.mc().player.sendMessage(new StringTextComponent(TextFormatting.GREEN + "Copied " + stack.getDisplayName().getString() + TextFormatting.GREEN + " to the clipboard!"));
     }
 
     private static void removeItemLore(List<String> tooltip) {
@@ -113,7 +112,7 @@ public class ItemScreenshotManager {
         boolean lore = false;
         for (String s : tooltip) {
             // only remove text after the item type indicator
-            Matcher m = ITEM_PATTERN.matcher(TextFormatting.getTextWithoutFormattingCodes(s));
+            Matcher m = ITEM_PATTERN.matcher(TextFormatting.stripFormatting(s));
             if (!lore && m.matches()) lore = true;
 
             if (lore && s.contains("" + TextFormatting.DARK_GRAY)) temp.add(s);

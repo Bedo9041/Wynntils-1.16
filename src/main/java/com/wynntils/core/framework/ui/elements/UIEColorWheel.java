@@ -4,6 +4,7 @@
 
 package com.wynntils.core.framework.ui.elements;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.enums.MouseButton;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
@@ -13,12 +14,11 @@ import com.wynntils.core.framework.ui.UI;
 import com.wynntils.modules.core.config.CoreDBConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.GuiPageButtonList;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.GuiSlider;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.input.Mouse;
@@ -60,7 +60,7 @@ public class UIEColorWheel extends UIEClickZone {
                     a = -1;
                 }
                 if (!(0 <= a && a <= 1)) {
-                    textBox.setColor(0xFF5555);
+                    textBox.withColor(0xFF5555);
                     return;
                 }
                 color = CustomColor.fromString(m.group(1), a);
@@ -69,25 +69,25 @@ public class UIEColorWheel extends UIEClickZone {
             } else if (MinecraftChatColors.set.has(text)) {
                 color = MinecraftChatColors.set.fromName(text);
             } else {
-                textBox.setColor(0xFF5555);
+                textBox.withColor(0xFF5555);
                 return;
             }
 
-            textBox.setColor(0x55FF55);
+            textBox.withColor(0x55FF55);
             if (!allowAlpha && color.a != 1) {
                 color = new CustomColor(color.r, color.g, color.b);
             }
             onAccept.accept(color);
         });
 
-        textBox.setColor(0x55FF55);
+        textBox.withColor(0x55FF55);
     }
 
     public void allowAlpha() {
         this.allowAlpha = true;
     }
 
-    public void setColor(CustomColor color) {
+    public void withColor(CustomColor color) {
         this.color = color;
 
         textBox.setText(formatColourName(color));
@@ -111,7 +111,7 @@ public class UIEColorWheel extends UIEClickZone {
     public void click(int mouseX, int mouseY, MouseButton button, UI ui) {
         textBox.click(mouseX, mouseY, button, ui);
 
-        if (hovering) mc.displayGuiScreen(new ColorPickerGUI());
+        if (hovering) mc.setScreen(new ColorPickerGUI());
     }
 
     public void keyTyped(char c, int i, UI ui) {
@@ -156,7 +156,7 @@ public class UIEColorWheel extends UIEClickZone {
             if (button == applyButton) {
                 color = toChange;
 
-                mc.displayGuiScreen(backGui);
+                mc.setScreen(backGui);
                 Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(clickSound, 1f));
                 onAccept.accept(color);
                 if (colorText == null) {
@@ -165,13 +165,13 @@ public class UIEColorWheel extends UIEClickZone {
                     textBox.setText(colorText);
                 }
             } else if (button == cancelButton) {
-                mc.displayGuiScreen(backGui);
+                mc.setScreen(backGui);
                 Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(clickSound, 1f));
             }
         }
 
         @Override
-        public void initGui() {
+        public void init() {
             buttonList.add(applyButton = new Button(0, width/2 - 65, height/2 + 95, 50, 20, TextFormatting.GREEN + "Apply"));
             buttonList.add(cancelButton = new Button(1, (width/2) + 15, height/2 + 95, 50, 20, TextFormatting.RED + "Cancel"));
             buttonList.add(valueSlider = new GuiSlider(new GuiPageButtonList.GuiResponder() {
@@ -193,12 +193,12 @@ public class UIEColorWheel extends UIEClickZone {
                     }
                 }, 3, this.width/2 + 5, this.height/2+71, "Opacity", 0, 1, toChange.a, (id, name, value) -> String.format("Opacity: %d%%", (int) (value * 100))));
             }
-            setColor(toChange);
+            withColor(toChange);
 
-            super.initGui();
+            super.init();
         }
 
-        private void setColor(CustomColor c) {
+        private void withColor(CustomColor c) {
             toChange = new CustomColor(c);
             float[] hsv = toChange.toHSV();
             float h = hsv[0];
@@ -248,7 +248,7 @@ public class UIEColorWheel extends UIEClickZone {
 
             if (fromSet != null) {
                 wheelSelected = false;
-                setColor(new CustomColor(fromSet));
+                withColor(new CustomColor(fromSet));
                 colorText = WordUtils.capitalizeFully(name.replace('_', ' '));
                 return true;
             }

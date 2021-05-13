@@ -90,7 +90,7 @@ public class SoundTrackManager {
             Optional<File> songFile = downloadedMusics.get(song.getAsHash()).getFile();
             if (!songFile.isPresent()) return; // available to play (downloaded)
 
-            player.play(songFile.get(), fadeIn, fadeOut, fastSwitch, repeat, lockQueue, quiet);
+            player.playSound(songFile.get(), fadeIn, fadeOut, fastSwitch, repeat, lockQueue, quiet);
             return;
         }
 

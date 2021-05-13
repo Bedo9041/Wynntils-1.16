@@ -61,7 +61,7 @@ public class CommandResponse {
     public void onMessageReceive(ClientChatReceivedEvent e) {
         if (e.getType() != chatType) return;
 
-        String message = formattedText ? e.getMessage().getFormattedText() : e.getMessage().getUnformattedText();
+        String message = formattedText ? e.getMessage().getFormattedText() : e.getMessage().getString();
         Matcher matcher = regex.matcher(message);
 
         if (!matcher.find()) return;

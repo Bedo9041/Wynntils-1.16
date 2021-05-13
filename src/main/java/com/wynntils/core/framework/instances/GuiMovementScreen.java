@@ -7,7 +7,6 @@ package com.wynntils.core.framework.instances;
 import com.wynntils.core.framework.enums.wynntils.WynntilsConflictContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.settings.KeyBinding;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;

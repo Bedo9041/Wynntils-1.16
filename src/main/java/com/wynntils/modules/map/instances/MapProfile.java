@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.map.instances;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.utils.helpers.MD5Verification;
 import com.wynntils.webapi.WebManager;
@@ -13,7 +14,6 @@ import com.wynntils.webapi.downloader.enums.DownloadAction;
 import com.wynntils.webapi.request.Request;
 import com.wynntils.webapi.request.RequestHandler;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 
 import javax.imageio.ImageIO;

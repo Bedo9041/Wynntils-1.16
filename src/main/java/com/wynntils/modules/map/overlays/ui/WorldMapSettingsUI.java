@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.map.overlays.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.framework.rendering.colors.CustomColor;
@@ -14,9 +15,7 @@ import com.wynntils.modules.map.configs.MapConfig;
 import com.wynntils.modules.map.configs.MapConfig.IconTexture;
 import com.wynntils.modules.map.overlays.objects.MapApiIcon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +44,7 @@ public class WorldMapSettingsUI extends Screen {
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         int rightAlign = 7 + (this.width-399)/2;
         int yOffset = 35;
         int maxHeight = Math.max(this.height - 90, yOffset + 17);
@@ -121,7 +120,7 @@ public class WorldMapSettingsUI extends Screen {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == Minecraft.getInstance().options.keyBindInventory.getKeyCode() ||  // DEFAULT: E
                 keyCode == MapModule.getModule().getMapKey().getKeyBinding().getKeyCode()) {  // DEFAULT: M
-            Utils.displayGuiScreen(new MainWorldMapUI());
+            Utils.setScreen(new MainWorldMapUI());
         }
         super.keyTyped(typedChar, keyCode);
     }
@@ -154,7 +153,7 @@ public class WorldMapSettingsUI extends Screen {
     @Override
     protected void actionPerformed(Button button) {
         if (button.id == 100) {
-            Utils.displayGuiScreen(new MainWorldMapUI());
+            Utils.setScreen(new MainWorldMapUI());
         } else if (button.id == 102) {
             MapConfig.INSTANCE.enabledMapIcons = MapConfig.resetMapIcons(false);
             MapConfig.INSTANCE.enabledMinimapIcons = MapConfig.resetMapIcons(true);
@@ -167,7 +166,7 @@ public class WorldMapSettingsUI extends Screen {
                 }
             }
             MapConfig.INSTANCE.saveSettings(MapModule.getModule());
-            Utils.displayGuiScreen(new MainWorldMapUI());
+            Utils.setScreen(new MainWorldMapUI());
         } else if (button.id == 101) {
             this.enabledMapIcons = MapConfig.resetMapIcons(false);
             this.enabledMinimapIcons = MapConfig.resetMapIcons(true);

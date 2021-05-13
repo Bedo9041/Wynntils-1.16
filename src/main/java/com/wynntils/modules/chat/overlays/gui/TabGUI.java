@@ -7,14 +7,13 @@ package com.wynntils.modules.chat.overlays.gui;
 import com.wynntils.modules.chat.instances.ChatTab;
 import com.wynntils.modules.chat.managers.TabManager;
 import com.wynntils.modules.chat.overlays.ChatOverlay;
-import net.minecraft.client.gui.*;
-import static net.minecraft.util.text.TextFormatting.*;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static net.minecraft.util.text.TextFormatting.*;
 
 
 public class TabGUI extends Screen {
@@ -55,7 +54,7 @@ public class TabGUI extends Screen {
     GuiLabel simpleSettings;
 
     @Override
-    public void initGui() {
+    public void init() {
         labelList.clear();
         simpleRegexSettings.clear();
 
@@ -139,22 +138,22 @@ public class TabGUI extends Screen {
     protected void actionPerformed(Button button) throws IOException {
         super.actionPerformed(button);
 
-        if (button == closeButton) mc.displayGuiScreen(new ChatGUI());
+        if (button == closeButton) mc.setScreen(new ChatGUI());
         else if (button == saveButton) {
             if (id == -2) {
                 TabManager.registerNewTab(new ChatTab(nameTextField.getText(), regexTextField.getText(), regexSettingsCreator(), autoCommandField.getText(), lowPriority.isChecked(), orderNbField.getText().matches("[0-9]+") ? Integer.parseInt(orderNbField.getText()) : 0));
             } else {
                 TabManager.updateTab(id, nameTextField.getText(), regexTextField.getText(), regexSettingsCreator(), autoCommandField.getText(), lowPriority.isChecked(), orderNbField.getText().matches("[0-9]+") ? Integer.parseInt(orderNbField.getText()) : 0);
             }
-            mc.displayGuiScreen(new ChatGUI());
+            mc.setScreen(new ChatGUI());
         } else if (button == deleteButton) {
-            mc.displayGuiScreen(new GuiYesNo((result, cc) -> {
+            mc.setScreen(new GuiYesNo((result, cc) -> {
                 if (result) {
                     int c = TabManager.deleteTab(id);
                     if (ChatOverlay.getChat().getCurrentTabId() == id) ChatOverlay.getChat().setCurrentTab(c);
-                    mc.displayGuiScreen(new ChatGUI());
+                    mc.setScreen(new ChatGUI());
                 } else {
-                    mc.displayGuiScreen(this);
+                    mc.setScreen(this);
                 }
             }, WHITE + (BOLD + "Do you really want to delete this chat tab?"), RED + "This action is irreversible!", 0));
         } else if (button == advancedButton) {

@@ -17,8 +17,8 @@ import com.wynntils.core.utils.reflections.ReflectionFields;
 import com.wynntils.core.utils.reflections.ReflectionMethods;
 import com.wynntils.modules.core.managers.GuildAndFriendManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiDisconnected;
-import net.minecraft.client.multiplayer.GuiConnecting;
+import net.minecraft.client.gui.screen.ConnectingScreen;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
@@ -27,12 +27,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,29 +54,28 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void onConnectScreen(GuiOpenEvent e) {
-        if (!(e.getGui() instanceof GuiConnecting)) return;
+        if (!(e.getGui() instanceof ConnectingScreen)) return;
 
         setLoadingStatusMsg("Trying to connect...");
     }
 
     @SubscribeEvent
     public void onScreenDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
-        if (!(e.getGui() instanceof GuiConnecting)) return;
+        if (!(e.getGui() instanceof ConnectingScreen)) return;
 
         e.getGui().drawCenteredString(Minecraft.getInstance().font, statusMsg, e.getGui().width / 2, e.getGui().height / 2 - 20, 16777215);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onServerJoin(FMLNetworkEvent.ClientConnectedToServerEvent e) {
+    public void onServerJoin(ClientPlayerNetworkEvent.LoggedInEvent e) {
         setLoadingStatusMsg("Connected...");
         Reference.setUserWorld(null);
-        FMLNetworkConstants
 
         if (Reference.onServer) MinecraftForge.EVENT_BUS.post(new WynncraftServerEvent.Login());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onServerLeave(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+    public void onServerLeave(ClientPlayerNetworkEvent.LoggedOutEvent e) {
         if (Reference.onServer) {
             if (Reference.onWorld) {
                 Reference.setUserWorld(null);
@@ -95,7 +92,7 @@ public class ClientEvents {
     public void triggerGameEvents(ClientChatReceivedEvent e) {
         if (e.getType() == ChatType.GAME_INFO) return;
 
-        String message = e.getMessage().getUnformattedText();
+        String message = e.getMessage().getString();
 
         if (message.contains("\u27a4")) return;  // Whisper from a player
 
@@ -182,7 +179,7 @@ public class ClientEvents {
                 if (e.getPacket().getAction() == Action.UPDATE_DISPLAY_NAME) {
                     ITextComponent nameComponent = (ITextComponent) ReflectionMethods.SPacketPlayerListItem$AddPlayerData_getDisplayName.invoke(player);
                     if (nameComponent == null) continue;
-                    String name = nameComponent.getUnformattedText();
+                    String name = nameComponent.getString();
                     String world = name.substring(name.indexOf("[") + 1, name.indexOf("]"));
 
                     if (world.equalsIgnoreCase(lastWorld)) continue;
@@ -233,7 +230,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void onWorldLeave(GuiOpenEvent e) {
-        if (Reference.onServer && e.getGui() instanceof GuiDisconnected) {
+        if (Reference.onServer && e.getGui() instanceof DisconnectedScreen) {
             if (Reference.onWorld) {
                 Reference.setUserWorld(null);
                 MinecraftForge.EVENT_BUS.post(new WynnWorldEvent.Leave());
@@ -247,8 +244,8 @@ public class ClientEvents {
     public void checkSpellCast(TickEvent.ClientTickEvent e) {
         if (!Reference.onWorld) return;
 
-        int remainingHighlightTicks = ReflectionFields.GuiIngame_remainingHighlightTicks.getValue(Minecraft.getInstance().ingameGUI);
-        ItemStack highlightingItemStack = ReflectionFields.GuiIngame_highlightingItemStack.getValue(Minecraft.getInstance().ingameGUI);
+        int remainingHighlightTicks = ReflectionFields.GuiIngame_remainingHighlightTicks.getValue(Minecraft.getInstance().gui);
+        ItemStack highlightingItemStack = ReflectionFields.GuiIngame_highlightingItemStack.getValue(Minecraft.getInstance().gui);
 
         if (remainingHighlightTicks == 0 || highlightingItemStack.isEmpty()) {
             heldItem = "";

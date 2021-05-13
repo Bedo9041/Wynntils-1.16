@@ -16,10 +16,10 @@ import com.wynntils.webapi.WebManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class WynnDataOverlay implements Listener {
 
     @SubscribeEvent
-    public void initGui(GuiOverlapEvent.ChestOverlap.InitGui e) {
+    public void init(GuiOverlapEvent.ChestOverlap.InitGui e) {
         if (!Reference.onWorld || !Utils.isCharacterInfoPage(e.getGui())) return;
 
         e.getButtonList().add(
@@ -58,12 +58,12 @@ public class WynnDataOverlay implements Listener {
     public void clickOnChest(GuiOverlapEvent.ChestOverlap.HandleMouseClick e) {
         if (!Utils.isCharacterInfoPage(e.getGui()) || e.getMouseButton() != 1) return;
 
-        if (!(Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT))) return;
+        if (!(Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT))) return;
 
         Slot slot = e.getGui().getSlotUnderMouse();
-        if (slot == null || slot.inventory == null || !slot.getHasStack()) return;
+        if (slot == null || slot.inventory == null || !slot.hasItem()) return;
 
-        ItemStack stack = slot.getStack();
+        ItemStack stack = slot.getItem();
         Utils.openUrl("https://www.wynndata.tk/i/" + Utils.encodeItemNameForUrl(stack));
         e.setCanceled(true);
     }

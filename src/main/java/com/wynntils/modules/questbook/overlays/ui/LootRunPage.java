@@ -19,13 +19,13 @@ import com.wynntils.modules.questbook.configs.QuestBookConfig;
 import com.wynntils.modules.questbook.instances.IconContainer;
 import com.wynntils.modules.questbook.instances.QuestBookPage;
 import com.wynntils.webapi.WebManager;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
@@ -54,8 +54,8 @@ public class LootRunPage extends QuestBookPage {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         initBasicSearch();
 
         names = LootRunManager.getStoredLootruns();
@@ -403,7 +403,7 @@ public class LootRunPage extends QuestBookPage {
                     WebManager.tryReloadApiUrls(true);
                 } else {
                     Location start = LootRunManager.getActivePath().getPoints().get(0);
-                    Utils.displayGuiScreen(new MainWorldMapUI((int) start.x, (int) start.z));
+                    Utils.setScreen(new MainWorldMapUI((int) start.x, (int) start.z));
                 }
             }
         }

@@ -10,9 +10,9 @@ import com.wynntils.core.utils.Utils;
 import com.wynntils.modules.utilities.UtilitiesModule;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -24,23 +24,23 @@ public class DailyReminderManager {
 
         if (System.currentTimeMillis() > UtilitiesConfig.Data.INSTANCE.dailyReminder) {
             StringTextComponent text = new StringTextComponent("");
-            text.getStyle().setColor(TextFormatting.GRAY);
+            text.getStyle().withColor(TextFormatting.GRAY);
 
             StringTextComponent openingBracket = new StringTextComponent("[");
-            openingBracket.getStyle().setColor(TextFormatting.DARK_GRAY);
-            text.appendSibling(openingBracket);
+            openingBracket.getStyle().withColor(TextFormatting.DARK_GRAY);
+            text.append(openingBracket);
 
-            text.appendText("!");
+            text.append("!");
 
             StringTextComponent closingBracket = new StringTextComponent("] ");
-            closingBracket.getStyle().setColor(TextFormatting.DARK_GRAY);
-            text.appendSibling(closingBracket);
+            closingBracket.getStyle().withColor(TextFormatting.DARK_GRAY);
+            text.append(closingBracket);
 
             StringTextComponent dailyRewards = new StringTextComponent("Daily rewards ");
-            dailyRewards.getStyle().setColor(TextFormatting.WHITE);
-            text.appendSibling(dailyRewards);
+            dailyRewards.getStyle().withColor(TextFormatting.WHITE);
+            text.append(dailyRewards);
 
-            text.appendText("are available to claim!");
+            text.append("are available to claim!");
 
             p.sendMessage(text);
             ModCore.mc().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.BLOCK_NOTE_PLING, 1.0F));
@@ -63,7 +63,7 @@ public class DailyReminderManager {
         if (!UtilitiesConfig.INSTANCE.dailyReminder || !Reference.onWorld) return;
 
         if (Utils.isCharacterInfoPage(e.getGui())) {
-            if (!((GuiContainer) e.getGui()).inventorySlots.getSlot(22).getHasStack()) {
+            if (!((ContainerScreen) e.getGui()).inventorySlots.getSlot(22).hasItem()) {
                 UtilitiesConfig.Data.INSTANCE.dailyReminder = System.currentTimeMillis() + 86400000;
                 UtilitiesConfig.Data.INSTANCE.saveSettings(UtilitiesModule.getModule());
             }

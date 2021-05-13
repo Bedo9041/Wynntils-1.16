@@ -9,12 +9,12 @@ import com.wynntils.core.utils.reference.EmeraldSymbols;
 import com.wynntils.webapi.WebManager;
 import com.wynntils.webapi.profiles.item.enums.ItemType;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.text.TextFormatting;
@@ -86,7 +86,7 @@ public class ItemUtils {
 
     /**
      * Same as {@link #getLore(ItemStack)}, but after calling
-     * {@link TextFormatting#getTextWithoutFormattingCodes(String) getTextWithoutFormattingCodes} on each lore line
+     * {@link TextFormatting#stripFormatting(String) stripFormatting} on each lore line
      *
      * @return A List containing all item lore without formatting codes
      */
@@ -97,7 +97,7 @@ public class ItemUtils {
         if (loreTag == null) return lore;
 
         for (int i = 0; i < loreTag.size(); ++i) {
-            lore.add(TextFormatting.getTextWithoutFormattingCodes(loreTag.getString(i)));
+            lore.add(TextFormatting.stripFormatting(loreTag.getString(i)));
         }
 
         return lore;

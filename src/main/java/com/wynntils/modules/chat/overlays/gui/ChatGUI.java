@@ -16,10 +16,10 @@ import com.wynntils.modules.chat.managers.TabManager;
 import com.wynntils.modules.chat.overlays.ChatOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiLabel;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.client.gui.NewChatGui;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatGUI extends GuiChat {
+public class ChatGUI extends NewChatGui {
 
     private static final ScreenRenderer renderer = new ScreenRenderer();
 
@@ -53,13 +53,13 @@ public class ChatGUI extends GuiChat {
         for (Map.Entry<ChatTab, ChatButton> tabButton : tabButtons.entrySet()) {
             if (tabButton.getValue().isMouseOver()) {
                 if (mouseButton == 1) {
-                    mc.displayGuiScreen(new TabGUI(TabManager.getAvailableTabs().indexOf(tabButton.getKey())));
+                    mc.setScreen(new TabGUI(TabManager.getAvailableTabs().indexOf(tabButton.getKey())));
                 } else {
                     ChatOverlay.getChat().setCurrentTab(TabManager.getAvailableTabs().indexOf(tabButton.getKey()));
                     tabButtons.values().stream().forEach(ChatButton::unselect);
                     tabButton.getValue().setSelected(true);
                 }
-                Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1f));
+                Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
             }
         }
 
@@ -69,7 +69,7 @@ public class ChatGUI extends GuiChat {
     @Override
     protected void actionPerformed(Button button) throws IOException {
         if (button == addTab) {
-            mc.displayGuiScreen(new TabGUI(-2));
+            mc.setScreen(new TabGUI(-2));
         } else if (button instanceof ChatButton) {
             ChatButton chatButton = (ChatButton) button;
             if (chatButton.getLanguage() != null) {
@@ -82,7 +82,7 @@ public class ChatGUI extends GuiChat {
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (inputField.getText().isEmpty() && keyCode == GLFW.GLFW_KEY_TAB) {
-            ChatOverlay.getChat().switchTabs(Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isKeyDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1);
+            ChatOverlay.getChat().switchTabs(Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT) || Keyboard.isDown(GLFW.GLFW_KEY_RSHIFT) ? -1 : +1);
             tabButtons.values().stream().forEach(ChatButton::unselect);
             tabButtons.get(ChatOverlay.getChat().getCurrentTab()).setSelected(true);
         }
@@ -100,8 +100,8 @@ public class ChatGUI extends GuiChat {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
         int buttonId = 0;
         int tabX = 0;
         for (ChatTab tab : TabManager.getAvailableTabs()) {
@@ -133,7 +133,7 @@ public class ChatGUI extends GuiChat {
         if (!ChatConfig.INSTANCE.useBrackets) {
             drawRect(2, this.height - 14, this.inputField.width + 2, this.height - 2, Integer.MIN_VALUE);
             this.inputField.drawTextBox();
-            ITextComponent itextcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+            ITextComponent itextcomponent = this.mc.gui.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 
             for (int i = 0; i < this.buttonList.size(); ++i) {
                 ((Button) this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY, partialTicks);

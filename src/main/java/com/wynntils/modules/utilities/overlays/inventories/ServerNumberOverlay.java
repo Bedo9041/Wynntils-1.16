@@ -20,8 +20,8 @@ public class ServerNumberOverlay implements Listener {
     @SubscribeEvent
     public void onItemOverlay(RenderEvent.DrawItemOverlay event) {
 
-        ItemStack serverStack = event.getStack();
-        String serverName = TextFormatting.getTextWithoutFormattingCodes(serverStack.getDisplayName());
+        ItemStack serverStack = event.getItem();
+        String serverName = TextFormatting.stripFormatting(serverStack.getDisplayName());
 
         if (serverName == null) return;
 

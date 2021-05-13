@@ -10,8 +10,8 @@ import com.wynntils.modules.core.CoreModule;
 import com.wynntils.modules.core.config.CoreDBConfig;
 import com.wynntils.modules.core.enums.UpdateStream;
 import com.wynntils.webapi.WebManager;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.util.text.TextFormatting;
 
@@ -30,7 +30,7 @@ public class UpdateAvailableScreen extends Screen {
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         this.buttonList.add(new Button(0, this.width / 2 - 100, this.height / 4 + 84, 200, 20, "View changelog"));
         this.buttonList.add(new Button(1, this.width / 2 - 100, this.height / 4 + 108, 98, 20, "Update now"));
         this.buttonList.add(new Button(2, this.width / 2 + 2, this.height / 4 + 108, 98, 20, "Update at exit"));
@@ -57,14 +57,14 @@ public class UpdateAvailableScreen extends Screen {
             CoreDBConfig.INSTANCE.showChangelogs = true;
             CoreDBConfig.INSTANCE.lastVersion = Reference.VERSION;
             CoreDBConfig.INSTANCE.saveSettings(CoreModule.getModule());
-            mc.displayGuiScreen(new UpdatingScreen(button.id == 1));
+            mc.setScreen(new UpdatingScreen(button.id == 1));
         } else if (button.id == 3) {
             // Ignore
             WebManager.skipJoinUpdate();
             ServerUtils.connect(null, server);
         } else if (button.id == 4) {
             // Cancel
-            mc.displayGuiScreen(null);
+            mc.setScreen(null);
         } else if (button.id == 0) {
             // View changelog
             boolean major = CoreDBConfig.INSTANCE.updateStream == UpdateStream.STABLE;

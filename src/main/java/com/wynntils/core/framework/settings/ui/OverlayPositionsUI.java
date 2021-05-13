@@ -18,7 +18,6 @@ import com.wynntils.core.framework.ui.UI;
 import com.wynntils.core.framework.ui.elements.UIEButton;
 import com.wynntils.core.framework.ui.elements.UIEClickZone;
 import net.minecraft.client.gui.screen.Screen;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,7 +109,7 @@ public class OverlayPositionsUI extends UI {
     @Override
     public void onClose() {
         mc.screen = null;
-        mc.displayGuiScreen(parentScreen);
+        mc.setScreen(parentScreen);
     }
 
     @Override
@@ -145,7 +144,7 @@ public class OverlayPositionsUI extends UI {
 
     @Override
     public void onRenderPostUIE(ScreenRenderer render) {
-        if (reloadButtons || (shiftDown && !Keyboard.isKeyDown(42)))
+        if (reloadButtons || (shiftDown && !Keyboard.isDown(42)))
             onInit();
     }
 
@@ -333,7 +332,7 @@ public class OverlayPositionsUI extends UI {
             mouseXPrevious = mouseX;
             mouseYPrevious = mouseY;
             Overlay overlay = (Overlay) overlaySettings.getHolder();
-            if (!Keyboard.isKeyDown(42)) {
+            if (!Keyboard.isDown(42)) {
                 if (overlay.growth == Overlay.OverlayGrowFrom.TOP_LEFT) {
                     overlay.position.offsetX = position.offsetX;
                     overlay.position.offsetY = position.offsetY;

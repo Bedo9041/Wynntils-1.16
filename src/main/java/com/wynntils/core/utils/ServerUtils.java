@@ -63,7 +63,7 @@ public class ServerUtils {
     public static void disconnect(boolean switchGui, boolean unloadServerPack) {
         Minecraft mc = Minecraft.getInstance();
 
-        WorldClient world = mc.world;
+        WorldClient world = mc.level;
         if (world == null) return;
 
         boolean singlePlayer = mc.isIntegratedServerRunning();
@@ -78,13 +78,13 @@ public class ServerUtils {
 
         if (!switchGui) return;
         if (singlePlayer) {
-            mc.displayGuiScreen(new GuiMainMenu());
+            mc.setScreen(new GuiMainMenu());
         } else if (realms) {
             // Should not be possible because Wynntils will
             // never be running on the latest version of Minecraft
             new RealmsBridge().switchToRealms(new GuiMainMenu());
         } else {
-            mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+            mc.setScreen(new GuiMultiplayer(new GuiMainMenu()));
         }
     }
 

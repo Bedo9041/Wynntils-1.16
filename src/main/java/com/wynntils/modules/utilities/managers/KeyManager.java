@@ -19,7 +19,7 @@ import com.wynntils.webapi.WebManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.network.play.client.CPacketClickWindow;
+import net.minecraft.network.play.client.CClickWindowPacket;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
@@ -49,7 +49,7 @@ public class KeyManager {
 
         checkForUpdatesKey = CoreModule.getModule().registerKeyBinding("Check for Updates", GLFW.GLFW_KEY_L, "Wynntils", true, WebManager::checkForUpdates);
 
-        CoreModule.getModule().registerKeyBinding("Open Settings", GLFW.GLFW_KEY_P, "Wynntils", KeyConflictContext.IN_GAME, true, () -> ModCore.mc().displayGuiScreen(SettingsUI.getInstance(ModCore.mc().screen)));
+        CoreModule.getModule().registerKeyBinding("Open Settings", GLFW.GLFW_KEY_P, "Wynntils", KeyConflictContext.IN_GAME, true, () -> ModCore.mc().setScreen(SettingsUI.getInstance(ModCore.mc().screen)));
 
         lockInventoryKey = UtilitiesModule.getModule().registerKeyBinding("Lock Slot", GLFW.GLFW_KEY_H, "Wynntils", KeyConflictContext.GUI, true, () -> {});
         favoriteTradeKey = UtilitiesModule.getModule().registerKeyBinding("Favorite Trade", GLFW.GLFW_KEY_F, "Wynntils", KeyConflictContext.GUI, true, () -> {});
@@ -77,7 +77,7 @@ public class KeyManager {
             if (!Reference.onWorld) return;
 
             ClientPlayerEntity player = Minecraft.getInstance().player;
-            player.connection.sendPacket(new CPacketClickWindow(
+            player.connection.send(new CClickWindowPacket(
                     player.inventoryContainer.windowId,
                     13, 0, ClickType.PICKUP, player.inventory.getItem(13),
                     player.inventoryContainer.getNextTransactionID(player.inventory)

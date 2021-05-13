@@ -78,7 +78,7 @@ public class ChangelogUI extends Screen {
         Minecraft mc = Minecraft.getInstance();
 
         Screen loadingScreen = new ChangelogUI(previousGui, Collections.singletonList("Loading..."), major);
-        mc.displayGuiScreen(loadingScreen);
+        mc.setScreen(loadingScreen);
         if (mc.screen != loadingScreen) {
             // Changed by an event handler
             return;
@@ -99,7 +99,7 @@ public class ChangelogUI extends Screen {
                 }
 
                 ChangelogUI gui = new ChangelogUI(previousGui, changelog, major);
-                mc.displayGuiScreen(gui);
+                mc.setScreen(gui);
             });
 
         }, "wynntils-changelog").start();
@@ -166,7 +166,7 @@ public class ChangelogUI extends Screen {
     @Override
     protected void keyTyped(char charType, int keyCode) throws IOException {
         if (keyCode == 1) {  // ESC
-            Minecraft.getInstance().displayGuiScreen(previousGui);
+            Minecraft.getInstance().setScreen(previousGui);
             if (Minecraft.getInstance().screen == null) mc.setIngameFocus();
         }
     }

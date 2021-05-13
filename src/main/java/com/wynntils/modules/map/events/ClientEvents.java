@@ -9,10 +9,10 @@ import com.wynntils.core.events.custom.*;
 import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.core.utils.objects.Location;
-import com.wynntils.modules.map.instances.LabelBake;
 import com.wynntils.modules.core.managers.CompassManager;
 import com.wynntils.modules.map.MapModule;
 import com.wynntils.modules.map.configs.MapConfig;
+import com.wynntils.modules.map.instances.LabelBake;
 import com.wynntils.modules.map.instances.WaypointProfile;
 import com.wynntils.modules.map.managers.BeaconManager;
 import com.wynntils.modules.map.managers.GuildResourceManager;
@@ -21,19 +21,19 @@ import com.wynntils.modules.utilities.instances.Toast;
 import com.wynntils.modules.utilities.overlays.hud.ToastOverlay;
 import com.wynntils.webapi.WebManager;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.network.play.server.SPacketAdvancementInfo;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,9 +65,9 @@ public class ClientEvents implements Listener {
     public void openChest(PlayerInteractEvent.RightClickBlock e) {
         if (e.getPos() == null || e.isCanceled()) return;
         BlockPos pos = e.getPos();
-        IBlockState state = e.getEntityPlayer().world.getBlockState(pos);
+        BlockState state = e.getPlayer().level.getBlockState(pos);
         if (!(state.getBlock() instanceof BlockContainer)) return;
-        lastLocation = pos.toImmutable();
+        lastLocation = pos.immutable();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -133,7 +133,7 @@ public class ClientEvents implements Listener {
     }
 
     @SubscribeEvent
-    public void receiveAdvancements(PacketEvent.Incoming<SPacketAdvancementInfo> event) {
+    public void receiveAdvancements(PacketEvent.Incoming<SAdvancementInfoPacket> event) {
         // can be done async without problems
         GuildResourceManager.processAdvancements(event.getPacket());
     }
@@ -143,7 +143,7 @@ public class ClientEvents implements Listener {
         if (!MapConfig.Telemetry.INSTANCE.enableLocationDetection) return;
 
         String formattedLabel = event.getLabel();
-        String label = TextFormatting.getTextWithoutFormattingCodes(formattedLabel);
+        String label = TextFormatting.stripFormatting(formattedLabel);
         Location location = event.getLocation();
 
         Matcher m = MOB_LABEL.matcher(label);
@@ -184,7 +184,7 @@ public class ClientEvents implements Listener {
     public void labelDetectEntity(LocationEvent.EntityLabelFoundEvent event) {
         if (!MapConfig.Telemetry.INSTANCE.enableLocationDetection) return;
 
-        String name = TextFormatting.getTextWithoutFormattingCodes(event.getLabel());
+        String name = TextFormatting.stripFormatting(event.getLabel());
         Location location = event.getLocation();
         Entity entity = event.getEntity();
 
@@ -194,7 +194,7 @@ public class ClientEvents implements Listener {
         Matcher m2 = HEALTH_LABEL.matcher(name);
         if (m2.find()) return;
 
-        if (!(entity instanceof EntityVillager)) return;
+        if (!(entity instanceof VillagerEntity)) return;
 
         LabelBake.handleNpc(name, event.getLabel(), location);
     }

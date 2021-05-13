@@ -4,11 +4,11 @@
 
 package com.wynntils.modules.utilities.managers;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.modules.core.config.CoreDBConfig;
 import com.wynntils.modules.utilities.configs.UtilitiesConfig;
+import net.minecraft.client.gui.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class TooltipScrollManager {
     private static Screen lastGuiScreen = null;
-    private static boolean isGuiContainer = false;
+    private static boolean isContainerScreen = false;
     private static ItemStack lastItemStack = null;
     private static int scrollAmount = 0;
     private static int maxScroll = 0;
@@ -34,15 +34,15 @@ public class TooltipScrollManager {
     }
 
     private static void updateHoveredItemStack() {
-        if (!isGuiContainer) return;
+        if (!isContainerScreen) return;
 
-        Slot hovered = ((GuiContainer) lastGuiScreen).getSlotUnderMouse();
+        Slot hovered = ((ContainerScreen) lastGuiScreen).getSlotUnderMouse();
         if (hovered == null) {
             lastItemStack = null;
             return;
         }
 
-        ItemStack hoveredStack = hovered.getStack();
+        ItemStack hoveredStack = hovered.getItem();
         if (hoveredStack != lastItemStack) {
             lastItemStack = hoveredStack;
             resetScroll();
@@ -65,7 +65,7 @@ public class TooltipScrollManager {
     public static void onBeforeDrawScreen(Screen on) {
         if (on != lastGuiScreen) {
             lastGuiScreen = on;
-            isGuiContainer = on instanceof GuiContainer;
+            isContainerScreen = on instanceof ContainerScreen;
             lastItemStack = null;
             resetScroll();
         }
@@ -80,13 +80,13 @@ public class TooltipScrollManager {
     private static void onBeforeTooltipWrap(RenderTooltipEvent e) {
         updateHoveredItemStack();
 
-        if (lastItemStack == null || e.getStack() != lastItemStack) return;
+        if (lastItemStack == null || e.getItem() != lastItemStack) return;
 
         hasText = e.getLines().size() > 1;
     }
 
     private static void onBeforeTooltipRender(RenderTooltipEvent e, boolean updateMaxScroll) {
-        if (lastItemStack == null || e.getStack() != lastItemStack) return;
+        if (lastItemStack == null || e.getItem() != lastItemStack) return;
 
         if (updateMaxScroll) {
             calculateMaxScroll(e.getLines());
@@ -119,7 +119,7 @@ public class TooltipScrollManager {
     }
 
     private static void onAfterTooltipRender(RenderTooltipEvent e, boolean updateMaxScroll) {
-        if (lastItemStack == null || e.getStack() != lastItemStack) return;
+        if (lastItemStack == null || e.getItem() != lastItemStack) return;
 
         if (updateMaxScroll) {
             calculateMaxScroll(e.getLines());

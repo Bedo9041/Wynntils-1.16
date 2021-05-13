@@ -4,12 +4,12 @@
 
 package com.wynntils.modules.utilities.overlays.ui;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.inventory.container.Container;
 
-public abstract class FakeGuiContainer extends GuiContainer {
+public abstract class FakeContainerScreen extends ContainerScreen {
 
-    public FakeGuiContainer(Container container) {
+    public FakeContainerScreen(Container container) {
         super(container);
     }
 

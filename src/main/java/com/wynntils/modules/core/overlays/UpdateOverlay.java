@@ -145,7 +145,7 @@ public class UpdateOverlay extends Overlay {
             }
         }
         if (acceptYesOrNo) {
-            if (Keyboard.isKeyDown(GLFW.GLFW_KEY_Y)) {
+            if (Keyboard.isDown(GLFW.GLFW_KEY_Y)) {
                 disappear = true;
                 acceptYesOrNo = false;
                 download = true;
@@ -153,7 +153,7 @@ public class UpdateOverlay extends Overlay {
                 CoreDBConfig.INSTANCE.showChangelogs = true;
                 CoreDBConfig.INSTANCE.lastVersion = Reference.VERSION;
                 CoreDBConfig.INSTANCE.saveSettings(CoreModule.getModule());
-            } else if (Keyboard.isKeyDown(GLFW.GLFW_KEY_N)) {
+            } else if (Keyboard.isDown(GLFW.GLFW_KEY_N)) {
                 timeout = 35000;
                 acceptYesOrNo = false;
                 download = false;

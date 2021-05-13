@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.ModCore;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.enums.ClassType;
@@ -29,15 +30,14 @@ import com.wynntils.webapi.profiles.item.objects.ItemRequirementsContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.Items;
-import net.minecraft.inventory.container.ClickType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
-public class GearViewerUI extends FakeGuiContainer {
+public class GearViewerUI extends FakeContainerScreen {
 
     private static final ResourceLocation INVENTORY_GUI_TEXTURE = new ResourceLocation("textures/gui/container/inventory.png");
 
@@ -70,8 +70,8 @@ public class GearViewerUI extends FakeGuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         // create item lore for armor pieces
         for (int i = 0; i < 4; i++) {
@@ -111,12 +111,12 @@ public class GearViewerUI extends FakeGuiContainer {
         this.renderHoveredToolTip(mouseX, mouseY);
 
         // replace lore with advanced ids if enabled
-        if (this.getSlotUnderMouse() != null && this.getSlotUnderMouse().getHasStack())
-            ItemIdentificationOverlay.replaceLore(this.getSlotUnderMouse().getStack());
+        if (this.getSlotUnderMouse() != null && this.getSlotUnderMouse().hasItem())
+            ItemIdentificationOverlay.replaceLore(this.getSlotUnderMouse().getItem());
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawContainerScreenBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bind(INVENTORY_GUI_TEXTURE);
         int i = (this.width - this.xSize) / 2;
@@ -129,7 +129,7 @@ public class GearViewerUI extends FakeGuiContainer {
     }
 
     private void createLore(ItemStack stack) {
-        String itemName = WebManager.getTranslatedItemName(getTextWithoutFormattingCodes(stack.getDisplayName())).replace("֎", "");
+        String itemName = WebManager.getTranslatedItemName(stripFormatting(stack.getDisplayName().getString())).replace("֎", "");
 
         // can't create lore on crafted items
         if (itemName.startsWith("Crafted")) {
@@ -354,7 +354,7 @@ public class GearViewerUI extends FakeGuiContainer {
         PlayerEntity ep = (PlayerEntity) e;
         if (ep.getTeam() == null) return; // player model npc
 
-        ModCore.mc().displayGuiScreen(new GearViewerUI(new InventoryBasic("", false, 5), ep));
+        ModCore.mc().setScreen(new GearViewerUI(new InventoryBasic("", false, 5), ep));
     }
 
 }

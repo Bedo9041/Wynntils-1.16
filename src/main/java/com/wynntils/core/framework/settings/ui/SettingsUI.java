@@ -27,7 +27,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class SettingsUI extends UI {
         Keyboard.enableRepeatEvents(false);
 
         mc.screen = null;
-        mc.displayGuiScreen(parentScreen);
+        mc.setScreen(parentScreen);
     }
 
     @Override
@@ -485,7 +484,7 @@ public class SettingsUI extends UI {
                             ((UIEColorWheel) valueElement).allowAlpha();
                         }
                     }
-                    ((UIEColorWheel) valueElement).setColor((CustomColor)value);
+                    ((UIEColorWheel) valueElement).withColor((CustomColor)value);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

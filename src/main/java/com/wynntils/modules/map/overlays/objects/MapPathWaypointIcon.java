@@ -4,12 +4,12 @@
 
 package com.wynntils.modules.map.overlays.objects;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.rendering.colors.CommonColors;
 import com.wynntils.modules.map.configs.MapConfig;
 import com.wynntils.modules.map.instances.PathWaypointProfile;
 import com.wynntils.modules.map.instances.PathWaypointProfile.PathPoint;
-import com.mojang.blaze3d.platform.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;

@@ -34,7 +34,7 @@ public class CommandForceUpdate extends CommandBase implements IClientCommand {
         WebManager.getUpdate().forceUpdate();
 
         StringTextComponent text = new StringTextComponent("Forcing Wynntils to update...");
-        text.getStyle().setColor(TextFormatting.AQUA);
+        text.getStyle().withColor(TextFormatting.AQUA);
         sender.sendMessage(text);
     }
 

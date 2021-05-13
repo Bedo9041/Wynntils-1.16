@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import static com.mojang.blaze3d.platform.GlStateManager.*;
 
@@ -28,8 +28,8 @@ public class BeaconManager {
 
         float alpha = 1f;
 
-        Vec3d positionVec = new Vec3d(loc.getX(), loc.getY() + 0.118D, loc.getZ());
-        Vec3d playerVec = renderManager.renderViewEntity.getPositionVector();
+        Vector3d positionVec = new Vector3d(loc.getX(), loc.getY() + 0.118D, loc.getZ());
+        Vector3d playerVec = renderManager.renderViewEntity.getPositionVector();
 
         double distance = playerVec.distanceTo(positionVec);
         if (distance <= 4f || distance > 4000f) return;
@@ -39,13 +39,13 @@ public class BeaconManager {
 
         alpha *= color.a;
 
-        double maxDistance = Minecraft.getInstance().options.renderDistanceChunks * 16d;
+        double maxDistance = Minecraft.getInstance().options.renderDistance * 16d;
         if (distance > maxDistance) {  // this will drag the beam to the visible area if outside of it
             // partial ticks aren't factored into player pos, so if we're going to use it for rendering, we need to recalculate to account for partial ticks
-            Vec3d prevPosVec = new Vec3d(renderManager.renderViewEntity.prevPosX, renderManager.renderViewEntity.prevPosY, renderManager.renderViewEntity.prevPosZ);
+            Vector3d prevPosVec = new Vector3d(renderManager.renderViewEntity.prevPosX, renderManager.renderViewEntity.prevPosY, renderManager.renderViewEntity.prevPosZ);
             playerVec = playerVec.subtract(prevPosVec).scale(partialTicks).add(prevPosVec);
 
-            Vec3d delta = positionVec.subtract(playerVec).normalize();
+            Vector3d delta = positionVec.subtract(playerVec).normalize();
             positionVec = playerVec.add(delta.x * maxDistance, delta.y * maxDistance, delta.z * maxDistance);
         }
 

@@ -6,11 +6,11 @@ package com.wynntils.modules.core.overlays.inventories;
 
 import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.FrameworkManager;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
-import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.inventory.container.ClickType;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -21,7 +21,7 @@ public class HorseReplacer extends GuiScreenHorseInventory  {
 
     IInventory lowerInv, upperInv;
 
-    public HorseReplacer(IInventory playerInv, IInventory horseInv, AbstractHorse horse) {
+    public HorseReplacer(IInventory playerInv, IInventory horseInv, AbstractHorseEntity horse) {
         super(playerInv, horseInv, horse);
 
         this.lowerInv = playerInv; this.upperInv = horseInv;
@@ -48,15 +48,15 @@ public class HorseReplacer extends GuiScreenHorseInventory  {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.HorseOverlap.DrawGuiContainerForegroundLayer(this, mouseX, mouseY));
+    public void drawContainerScreenForegroundLayer(int mouseX, int mouseY) {
+        super.drawContainerScreenForegroundLayer(mouseX, mouseY);
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.HorseOverlap.DrawContainerScreenForegroundLayer(this, mouseX, mouseY));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        FrameworkManager.getEventBus().post(new GuiOverlapEvent.HorseOverlap.DrawGuiContainerBackgroundLayer(this, mouseX, mouseY));
+    protected void drawContainerScreenBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawContainerScreenBackgroundLayer(partialTicks, mouseX, mouseY);
+        FrameworkManager.getEventBus().post(new GuiOverlapEvent.HorseOverlap.DrawContainerScreenBackgroundLayer(this, mouseX, mouseY));
     }
 
     @Override

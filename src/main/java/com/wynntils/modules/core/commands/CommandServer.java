@@ -14,8 +14,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.client.IClientCommand;
@@ -102,13 +102,13 @@ public class CommandServer extends CommandBase implements IClientCommand {
             text = new StringTextComponent(
                     "Usage: /s list [type] [options]\n order of types and options does not matter\nDefault: print all servers oldest to new\n\ntypes:\n");
             for (String type : serverTypes) {
-                text.appendText(String.format("  %s\n", type));
+                text.append(String.format("  %s\n", type));
             }
-            text.appendText("options:\n");
-            text.appendText("  g, group : group servers by type\n");
-            text.appendText("  s, sort : sort servers alphabetically, sets group flag\n");
-            text.appendText("  c, count : print amount of online servers\n");
-            text.appendText("  h, help : this help\n");
+            text.append("options:\n");
+            text.append("  g, group : group servers by type\n");
+            text.append("  s, sort : sort servers alphabetically, sets group flag\n");
+            text.append("  c, count : print amount of online servers\n");
+            text.append("  h, help : this help\n");
             sender.sendMessage(text);
             return;
         }
@@ -126,10 +126,10 @@ public class CommandServer extends CommandBase implements IClientCommand {
                             (options.contains("count") ? String.format(" (%d)", onlinePlayers.size()): "") + ":\n");
 
                     for (String type : serverTypes.subList(0, serverTypes.size() - 1)) {
-                        toEdit.appendSibling(getFilteredServerList(onlinePlayers, type, options));
-                        toEdit.appendText("\n");
+                        toEdit.append(getFilteredServerList(onlinePlayers, type, options));
+                        toEdit.append("\n");
                     }
-                    toEdit.appendSibling(getFilteredServerList(onlinePlayers, serverTypes.get(serverTypes.size() - 1), options));
+                    toEdit.append(getFilteredServerList(onlinePlayers, serverTypes.get(serverTypes.size() - 1), options));
 
                     ChatOverlay.getChat().printUnloggedChatMessage(toEdit, messageId);  // updates the message
                     return;
@@ -150,7 +150,7 @@ public class CommandServer extends CommandBase implements IClientCommand {
                         new StringTextComponent(
                                 TextFormatting.RED +
                                 "An error occurred while trying to get the servers!"
-                        ).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        ).setStyle(new Style().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new StringTextComponent(TextFormatting.RED + ex.getMessage())
                                 ))),
                         messageId
@@ -195,17 +195,17 @@ public class CommandServer extends CommandBase implements IClientCommand {
 
                         if (players.size() > 0) {
                             for (String player : players.subList(0, players.size() - 1)) {
-                                playerText.appendText(String.format("%s, ", player));
+                                playerText.append(String.format("%s, ", player));
                             }
-                            playerText.appendText(players.get(players.size() - 1));
-                            playerText.getStyle().setColor(TextFormatting.GRAY);
-                            text.appendSibling(playerText);
+                            playerText.append(players.get(players.size() - 1));
+                            playerText.getStyle().withColor(TextFormatting.GRAY);
+                            text.append(playerText);
                         }
 
-                        text.appendText("\nTotal online players: ");
+                        text.append("\nTotal online players: ");
                         StringTextComponent playerCountText = new StringTextComponent(Integer.toString(players.size()));
-                        playerCountText.getStyle().setColor(TextFormatting.GRAY);
-                        text.appendSibling(playerCountText);
+                        playerCountText.getStyle().withColor(TextFormatting.GRAY);
+                        text.append(playerCountText);
 
                         ChatOverlay.getChat().printUnloggedChatMessage(text, messageId);
                         return;
@@ -219,7 +219,7 @@ public class CommandServer extends CommandBase implements IClientCommand {
                         new StringTextComponent(
                                 TextFormatting.RED +
                                         "An error occurred while trying to get the servers!"
-                        ).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        ).setStyle(new Style().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new StringTextComponent(TextFormatting.RED + e.getMessage())
                         ))),
                         messageId
@@ -240,29 +240,29 @@ public class CommandServer extends CommandBase implements IClientCommand {
         for (String serverName : options.contains("sort") ? new TreeSet<>(onlinePlayers.keySet()) : onlinePlayers.keySet()) {
             if (serverName.toLowerCase().contains(filter.toLowerCase())) {
                 StringTextComponent serverText = new StringTextComponent(String.format("%s ", serverName));
-                if (onlinePlayers.get(serverName).size() >= 48) {serverText.getStyle().setColor(TextFormatting.RED);}
-                else {serverText.getStyle().setColor(TextFormatting.GREEN);}
-                serverListText.appendSibling(serverText);
+                if (onlinePlayers.get(serverName).size() >= 48) {serverText.getStyle().withColor(TextFormatting.RED);}
+                else {serverText.getStyle().withColor(TextFormatting.GREEN);}
+                serverListText.append(serverText);
                 serverCount++;
             }
         }
 
         if (filter.equals("")) {
-            text.appendText("Available servers" +
+            text.append("Available servers" +
                     (options.contains("count") ? String.format(" (%d)", onlinePlayers.size()): "") + ":\n");
         } else if (options.contains("count")) {
-            text.appendText(String.format("%s (%d):\n", filter, serverCount));
+            text.append(String.format("%s (%d):\n", filter, serverCount));
         } else {
-            text.appendText(String.format("%s:\n", filter));
+            text.append(String.format("%s:\n", filter));
         }
 
         if (serverCount == 0) {
-            serverListText.appendText("none");
-            serverListText.getStyle().setColor(TextFormatting.DARK_GRAY);
-            text.getStyle().setColor(TextFormatting.GRAY);
+            serverListText.append("none");
+            serverListText.getStyle().withColor(TextFormatting.DARK_GRAY);
+            text.getStyle().withColor(TextFormatting.GRAY);
         }
 
-        text.appendSibling(serverListText);
+        text.append(serverListText);
 
         return text;
     }

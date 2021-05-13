@@ -4,7 +4,7 @@
 
 package com.wynntils.modules.questbook.overlays.ui;
 
-import com.wynntils.core.framework.enums.wynntils.WynntilsSound;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.framework.instances.PlayerInfo;
 import com.wynntils.core.framework.instances.data.CharacterData;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
@@ -18,7 +18,6 @@ import com.wynntils.modules.map.overlays.ui.MainWorldMapUI;
 import com.wynntils.modules.questbook.configs.QuestBookConfig;
 import com.wynntils.modules.questbook.enums.AnalysePosition;
 import com.wynntils.modules.questbook.enums.DiscoveryType;
-import com.wynntils.modules.questbook.enums.QuestBookPages;
 import com.wynntils.modules.questbook.instances.DiscoveryInfo;
 import com.wynntils.modules.questbook.instances.IconContainer;
 import com.wynntils.modules.questbook.instances.QuestBookPage;
@@ -28,11 +27,10 @@ import com.wynntils.webapi.profiles.DiscoveryProfile;
 import com.wynntils.webapi.profiles.TerritoryProfile;
 import com.wynntils.webapi.request.Request;
 import com.wynntils.webapi.request.RequestHandler;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.MainWindow;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -311,7 +309,7 @@ public class DiscoveriesPage extends QuestBookPage {
         // Handle discovery click
         if (overDiscovery != null) {
             if (overDiscovery.getType() == DiscoveryType.SECRET) { // Secret discovery actions
-                String name = TextFormatting.getTextWithoutFormattingCodes(overDiscovery.getName());
+                String name = TextFormatting.stripFormatting(overDiscovery.getName());
 
                 switch (mouseButton) {
                     case 0: // Left Click
@@ -344,11 +342,11 @@ public class DiscoveriesPage extends QuestBookPage {
                         Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.BLOCK_ANVIL_PLACE, 1f));
                     break;
                     case 1: // Right Click
-                        Utils.displayGuiScreen(new MainWorldMapUI(x, z));
+                        Utils.setScreen(new MainWorldMapUI(x, z));
                         Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1f));
                     break;
                     case 2: //Middle Click
-                        Utils.displayGuiScreen(new MainWorldMapUI(x, z));
+                        Utils.setScreen(new MainWorldMapUI(x, z));
                         CompassManager.setCompassLocation(new Location(x, 50, z));
                         Minecraft.getInstance().getSoundManager().play(SimpleSound.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1f));
                     break;
@@ -442,7 +440,7 @@ public class DiscoveriesPage extends QuestBookPage {
 
                         boolean requirementsMet = true;
                         for (String requirement : c.getRequirements()) {
-                            requirementsMet &= QuestManager.getCurrentDiscoveries().stream().anyMatch(foundDiscovery -> TextFormatting.getTextWithoutFormattingCodes(foundDiscovery.getName()).equals(requirement));
+                            requirementsMet &= QuestManager.getCurrentDiscoveries().stream().anyMatch(foundDiscovery -> TextFormatting.stripFormatting(foundDiscovery.getName()).equals(requirement));
                         }
                         if (!requirementsMet) {
                             return false;
@@ -458,7 +456,7 @@ public class DiscoveriesPage extends QuestBookPage {
 
                     // Checks if already in list
                     if (QuestManager.getCurrentDiscoveries().stream().anyMatch(foundDiscovery -> {
-                        boolean nameMatch = TextFormatting.getTextWithoutFormattingCodes(foundDiscovery.getName()).equals(c.getName());
+                        boolean nameMatch = TextFormatting.stripFormatting(foundDiscovery.getName()).equals(c.getName());
                         boolean levelMatch = foundDiscovery.getMinLevel() == c.getLevel();
                         boolean typeMatch = foundDiscovery.getType().name().toLowerCase(Locale.ROOT).equals(c.getType());
 
@@ -550,10 +548,10 @@ public class DiscoveriesPage extends QuestBookPage {
                     CompassManager.setCompassLocation(new Location(x, 50, z));
                 break;
                 case "map":
-                    Utils.displayGuiScreen(new MainWorldMapUI(x, z));
+                    Utils.setScreen(new MainWorldMapUI(x, z));
                 break;
                 case "both":
-                    Utils.displayGuiScreen(new MainWorldMapUI(x, z));
+                    Utils.setScreen(new MainWorldMapUI(x, z));
                     CompassManager.setCompassLocation(new Location(x, 50, z));
                 break;
             }

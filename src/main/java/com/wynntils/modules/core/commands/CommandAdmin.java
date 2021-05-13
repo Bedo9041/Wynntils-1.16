@@ -43,7 +43,7 @@ public class CommandAdmin extends CommandBase implements IClientCommand {
         if (args.length >= 1 && args[0].equalsIgnoreCase("broadcast")) {
             if (args.length < 3) {
                 output = new StringTextComponent("Use: /wadmin broadcast <TITLE/MESSAGE> <message>");
-                output.getStyle().setColor(TextFormatting.RED);
+                output.getStyle().withColor(TextFormatting.RED);
 
                 sender.sendMessage(output);
                 return;
@@ -61,7 +61,7 @@ public class CommandAdmin extends CommandBase implements IClientCommand {
         }
 
         output = new StringTextComponent("Use: /wadmin broadcast");
-        output.getStyle().setColor(TextFormatting.RED);
+        output.getStyle().withColor(TextFormatting.RED);
 
         sender.sendMessage(output);
     }

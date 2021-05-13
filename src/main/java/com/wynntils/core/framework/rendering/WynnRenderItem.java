@@ -4,12 +4,12 @@
 
 package com.wynntils.core.framework.rendering;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.core.events.custom.RenderEvent;
 import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureManager;

@@ -8,9 +8,8 @@ import com.wynntils.Reference;
 import com.wynntils.modules.core.CoreModule;
 import com.wynntils.modules.core.config.CoreDBConfig;
 import com.wynntils.modules.core.overlays.UpdateOverlay;
-
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
@@ -36,7 +35,7 @@ public class UpdatingScreen extends Screen {
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         this.buttonList.add(backButton = new Button(0, this.width / 2 - 100, this.height / 4 + 132, 200, 20, ""));
         updateText();
     }
@@ -135,7 +134,7 @@ public class UpdatingScreen extends Screen {
     @Override
     public void actionPerformed(Button button) {
         if (button.id == 0) {
-            mc.displayGuiScreen(null);
+            mc.setScreen(null);
         }
     }
 

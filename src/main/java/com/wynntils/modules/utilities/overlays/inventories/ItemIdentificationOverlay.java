@@ -27,8 +27,8 @@ import com.wynntils.webapi.profiles.item.enums.MajorIdentification;
 import com.wynntils.webapi.profiles.item.objects.IdentificationContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,23 +52,23 @@ public class ItemIdentificationOverlay implements Listener {
 
     @SubscribeEvent
     public void onChest(GuiOverlapEvent.ChestOverlap.DrawScreen.Post e) {
-        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().getHasStack()) return;
+        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().hasItem()) return;
 
-        replaceLore(e.getGui().getSlotUnderMouse().getStack());
+        replaceLore(e.getGui().getSlotUnderMouse().getItem());
     }
 
     @SubscribeEvent
     public void onInventory(GuiOverlapEvent.InventoryOverlap.DrawScreen e) {
-        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().getHasStack()) return;
+        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().hasItem()) return;
 
-        replaceLore(e.getGui().getSlotUnderMouse().getStack());
+        replaceLore(e.getGui().getSlotUnderMouse().getItem());
     }
 
     @SubscribeEvent
     public void onHorse(GuiOverlapEvent.HorseOverlap.DrawScreen e) {
-        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().getHasStack()) return;
+        if (e.getGui().getSlotUnderMouse() == null || !e.getGui().getSlotUnderMouse().hasItem()) return;
 
-        replaceLore(e.getGui().getSlotUnderMouse().getStack());
+        replaceLore(e.getGui().getSlotUnderMouse().getItem());
     }
 
     public static void replaceLore(ItemStack stack)  {
@@ -76,7 +76,7 @@ public class ItemIdentificationOverlay implements Listener {
         CompoundNBT nbt = stack.getTag();
         if (nbt.contains("wynntilsIgnore")) return;
 
-        String itemName = StringUtils.normalizeBadString(getTextWithoutFormattingCodes(stack.getDisplayName()));
+        String itemName = StringUtils.normalizeBadString(stripFormatting(stack.getDisplayName().getString()));
 
         // Check if unidentified item.
         if (itemName.contains("Unidentified") && UtilitiesConfig.Identifications.INSTANCE.showItemGuesses) {
@@ -96,7 +96,7 @@ public class ItemIdentificationOverlay implements Listener {
         ItemProfile item = WebManager.getItems().get(wynntils.getString("originName"));
 
         // Block if the item is not the real item
-        if (!wynntils.contains("isPerfect") && !stack.getDisplayName().startsWith(item.getTier().getTextColor())) {
+        if (!wynntils.contains("isPerfect") && !stack.getDisplayName().getString().startsWith(item.getTier().getTextColor())) {
             nbt.putBoolean("wynntilsIgnore", true);
             nbt.removeTag("wynntils");
             return;
@@ -196,7 +196,7 @@ public class ItemIdentificationOverlay implements Listener {
                 continue;
             }
 
-            String rawLore = getTextWithoutFormattingCodes(oldLore);
+            String rawLore = stripFormatting(oldLore);
             // market stuff
             if (rawLore.contains("Price:")) {
                 ignoreNext = true;
@@ -342,15 +342,15 @@ public class ItemIdentificationOverlay implements Listener {
     }
 
     private static void addItemGuesses(ItemStack stack) {
-        String name = StringUtils.normalizeBadString(stack.getDisplayName());
-        String itemType = getTextWithoutFormattingCodes(name).split(" ", 3)[1];
+        String name = StringUtils.normalizeBadString(stack.getDisplayName().getString());
+        String itemType = stripFormatting(name).split(" ", 3)[1];
         String levelRange = null;
 
         List<String> lore = ItemUtils.getLore(stack);
 
         for (String aLore : lore) {
             if (aLore.contains("Lv. Range")) {
-                levelRange = getTextWithoutFormattingCodes(aLore).replace("- Lv. Range: ", "");
+                levelRange = stripFormatting(aLore).replace("- Lv. Range: ", "");
                 break;
             }
         }
@@ -391,8 +391,8 @@ public class ItemIdentificationOverlay implements Listener {
 
     private static CompoundNBT generateData(ItemStack stack) {
         IdentificationType idType;
-        if (Keyboard.isKeyDown(GLFW.GLFW_KEY_LSHIFT)) idType = IdentificationType.MIN_MAX;
-        else if (Keyboard.isKeyDown(GLFW.GLFW_KEY_LCONTROL)) idType = IdentificationType.UPGRADE_CHANCES;
+        if (Keyboard.isDown(GLFW.GLFW_KEY_LSHIFT)) idType = IdentificationType.MIN_MAX;
+        else if (Keyboard.isDown(GLFW.GLFW_KEY_LCONTROL)) idType = IdentificationType.UPGRADE_CHANCES;
         else idType = IdentificationType.PERCENTAGES;
 
         if (stack.hasTagCompound() && stack.getTag().contains("wynntils")) {
@@ -412,7 +412,7 @@ public class ItemIdentificationOverlay implements Listener {
         CompoundNBT mainTag = new CompoundNBT();
 
         {  // main data
-            mainTag.putString("originName", StringUtils.normalizeBadString(getTextWithoutFormattingCodes(stack.getDisplayName())));  // this replace allow market items to be scanned
+            mainTag.putString("originName", StringUtils.normalizeBadString(stripFormatting(stack.getDisplayName().getString())));  // this replace allow market items to be scanned
             mainTag.putString("currentType", idType.toString());
             mainTag.putBoolean("shouldUpdate", true);
         }
@@ -423,7 +423,7 @@ public class ItemIdentificationOverlay implements Listener {
         {  // lore data
             boolean isBonus = false;
             for (String loreLine : ItemUtils.getLore(stack)) {
-                String lColor = getTextWithoutFormattingCodes(loreLine);
+                String lColor = stripFormatting(loreLine);
 
                 if (lColor.isEmpty()) continue;
 

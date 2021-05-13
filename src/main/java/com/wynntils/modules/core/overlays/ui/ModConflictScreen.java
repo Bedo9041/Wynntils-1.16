@@ -20,7 +20,7 @@ public class ModConflictScreen extends CustomModLoadingErrorDisplayException {
 
 
     @Override
-    public void initGui(GuiErrorScreen errorScreen, FontRenderer font) {
+    public void init(GuiErrorScreen errorScreen, FontRenderer font) {
 
     }
 

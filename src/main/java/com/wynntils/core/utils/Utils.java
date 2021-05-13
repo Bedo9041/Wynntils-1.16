@@ -7,11 +7,11 @@ package com.wynntils.core.utils;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wynntils.ModCore;
 import com.wynntils.core.utils.reflections.ReflectionFields;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.MainWindow;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -28,9 +28,8 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.glfw.GLFW;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -143,8 +142,9 @@ public class Utils {
      * Return true if the Screen is the character information page (selected from the compass)
      */
     public static boolean isCharacterInfoPage(Screen gui) {
-        if (!(gui instanceof GuiContainer)) return false;
-        Matcher m = CHAR_INFO_PAGE_TITLE.matcher(((GuiContainer)gui).inventorySlots.getSlot(0).inventory.getName());
+        if (!(gui instanceof ContainerScreen)) return false;
+        // TODO: Formatting Check
+        Matcher m = CHAR_INFO_PAGE_TITLE.matcher(((ContainerScreen)gui).getTitle().getString());
         return m.find();
     }
 
@@ -152,8 +152,8 @@ public class Utils {
      * @return true if the Screen is the server selection, false otherwise
      */
     public static boolean isServerSelector(Screen gui) {
-        if (!(gui instanceof GuiContainer)) return false;
-        Matcher m = SERVER_SELECTOR_TITLE.matcher(((GuiContainer) gui).inventorySlots.getSlot(0).inventory.getName());
+        if (!(gui instanceof ContainerScreen)) return false;
+        Matcher m = SERVER_SELECTOR_TITLE.matcher(((ContainerScreen) gui).getTitle().getString());
         return m.find();
     }
 
@@ -165,16 +165,16 @@ public class Utils {
      * @return the Scoreboard Team
      */
     public static ScorePlayerTeam createFakeScoreboard(String name, Team.CollisionRule rule) {
-        Scoreboard mc = Minecraft.getInstance().world.getScoreboard();
-        if (mc.getTeam(name) != null) return mc.getTeam(name);
+        Scoreboard mc = Minecraft.getInstance().level.getScoreboard();
+        if (mc.getPlayerTeam(name) != null) return mc.getPlayerTeam(name);
 
-        String player = Minecraft.getInstance().player.getName();
+        String player = Minecraft.getInstance().player.getName().getString();
         if (mc.getPlayersTeam(player) != null) previousTeam = mc.getPlayersTeam(player).getName();
 
-        ScorePlayerTeam team = mc.createTeam(name);
+        ScorePlayerTeam team = mc.addPlayerTeam(name);
         team.setCollisionRule(rule);
 
-        mc.addPlayerToTeam(player, name);
+        mc.addPlayerToTeam(player, team);
         return team;
     }
 
@@ -184,11 +184,11 @@ public class Utils {
      * @param name the scoreboard name
      */
     public static void removeFakeScoreboard(String name) {
-        Scoreboard mc = Minecraft.getInstance().world.getScoreboard();
-        if (mc.getTeam(name) == null) return;
+        Scoreboard mc = Minecraft.getInstance().level.getScoreboard();
+        if (mc.getPlayerTeam(name) == null) return;
 
-        mc.removeTeam(mc.getTeam(name));
-        if (previousTeam != null) mc.addPlayerToTeam(Minecraft.getInstance().player.getName(), previousTeam);
+        mc.removePlayerTeam(mc.getPlayerTeam(name));
+        if (previousTeam != null) mc.addPlayerToTeam(Minecraft.getInstance().player.getName().getString(), mc.getPlayerTeam(previousTeam));
     }
 
     /**
@@ -196,7 +196,7 @@ public class Utils {
      *
      * @param screen the provided screen
      */
-    public static void displayGuiScreen(Screen screen) {
+    public static void setScreen(Screen screen) {
         Minecraft mc = Minecraft.getInstance();
 
         Screen oldScreen = mc.screen;
@@ -207,7 +207,7 @@ public class Utils {
 
         if (oldScreen == screen) return;
         if (oldScreen != null) {
-            oldScreen.onGuiClosed();
+            oldScreen.onClose();
         }
 
         mc.screen = screen;
@@ -267,8 +267,8 @@ public class Utils {
         final Pattern PERCENTAGE_PATTERN = Pattern.compile(" +\\[[0-9]+%\\]");
         final Pattern INGREDIENT_PATTERN = Pattern.compile(" +\\[✫+\\]");
 
-        String name = stack.getDisplayName();
-        name = TextFormatting.getTextWithoutFormattingCodes(name);
+        String name = stack.getDisplayName().getString();
+        name = TextFormatting.stripFormatting(name);
         name = PERCENTAGE_PATTERN.matcher(name).replaceAll("");
         name = INGREDIENT_PATTERN.matcher(name).replaceAll("");
         if (name.startsWith("Perfect ")) {
@@ -312,13 +312,13 @@ public class Utils {
 
         Utils.copyToClipboard(url);
         StringTextComponent text = new StringTextComponent("Error opening link, it has been copied to your clipboard\n");
-        text.getStyle().setColor(TextFormatting.DARK_RED);
+        text.getStyle().withColor(TextFormatting.DARK_RED);
 
         StringTextComponent urlComponent = new StringTextComponent(url);
-        urlComponent.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-        urlComponent.getStyle().setColor(TextFormatting.DARK_AQUA);
+        urlComponent.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
+        urlComponent.getStyle().withColor(TextFormatting.DARK_AQUA);
         urlComponent.getStyle().setUnderlined(true);
-        text.appendSibling(urlComponent);
+        text.append(urlComponent);
 
         ModCore.mc().player.sendMessage(text);
     }

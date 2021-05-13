@@ -6,8 +6,9 @@ package com.wynntils.modules.core.enums;
 
 import com.wynntils.core.utils.helpers.CommandResponse;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
@@ -46,7 +47,7 @@ public enum ToggleSetting {
         String inverseMatcher = value ? disabledMatcher : enabledMatcher;
 
         CommandResponse response = new CommandResponse("/toggle " + name, (m, t) -> {
-            String message = t.getUnformattedText();
+            String message = t.getString();
             // Try again if the current value was already the expected result
             if (!message.contains(matcher)) {
                 // Make sure it's the right toggle in case we're running multiple
@@ -59,7 +60,7 @@ public enum ToggleSetting {
             // show message is false when the option was already on the value status
             if (!showMessage) return;
 
-            Minecraft.getInstance().player.sendMessage(getToggleText(value));
+            Minecraft.getInstance().player.sendMessage(getToggleText(value), Util.NIL_UUID);
         }, TOGGLE_MESSAGE_PATTERN);
 
         response.setCancel(true);
@@ -67,43 +68,43 @@ public enum ToggleSetting {
         response.executeCommand();
     }
 
-    private TextComponentBase getToggleText(boolean value) {
+    private TextComponent getToggleText(boolean value) {
         String function = value ? "enabled" : "disabled";
         String callback = value ? "disable" : "enable";
 
         StringTextComponent base = new StringTextComponent(
                 "Wynntils automatically "
         );
-        base.getStyle().setColor(TextFormatting.GRAY);
+        base.getStyle().withColor(TextFormatting.GRAY);
 
         StringTextComponent status = new StringTextComponent(function);
-        status.getStyle().setColor(TextFormatting.WHITE);
-        base.appendSibling(status);
+        status.getStyle().withColor(TextFormatting.WHITE);
+        base.append(status);
 
         StringTextComponent continuation = new StringTextComponent(" Wynncraft toggle option ");
-        continuation.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(continuation);
+        continuation.getStyle().withColor(TextFormatting.GRAY);
+        base.append(continuation);
 
         StringTextComponent toggle = new StringTextComponent(name);
-        toggle.getStyle().setColor(TextFormatting.WHITE);
-        base.appendSibling(toggle);
+        toggle.getStyle().withColor(TextFormatting.WHITE);
+        base.append(toggle);
 
         StringTextComponent back = new StringTextComponent(" (mostly likely for conflict issues).\nTo " + callback + " it again type ");
-        back.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(back);
+        back.getStyle().withColor(TextFormatting.GRAY);
+        base.append(back);
 
         StringTextComponent backCommand = new StringTextComponent("/toggle " + name);
-        backCommand.getStyle().setColor(TextFormatting.WHITE);
+        backCommand.getStyle().withColor(TextFormatting.WHITE);
         backCommand.getStyle().setUnderlined(true);
-        backCommand.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/toggle " + name));
-        backCommand.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+        backCommand.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/toggle " + name));
+        backCommand.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new StringTextComponent("Click to run /toggle " + name))
         );
-        base.appendSibling(backCommand);
+        base.append(backCommand);
 
         StringTextComponent end = new StringTextComponent(".\n");
-        end.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(end);
+        end.getStyle().withColor(TextFormatting.GRAY);
+        base.append(end);
 
         return base;
     }

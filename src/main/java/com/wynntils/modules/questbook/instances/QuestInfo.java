@@ -50,7 +50,7 @@ public class QuestInfo {
         this.isMiniQuest = isMiniQuest;
 
         lore = ItemUtils.getLore(originalStack);
-        name = StringUtils.normalizeBadString(getTextWithoutFormattingCodes(originalStack.getDisplayName())).replace(" [Tracked]", "");
+        name = StringUtils.normalizeBadString(stripFormatting(originalStack.getDisplayName())).replace(" [Tracked]", "");
 
         Iterator<String> loreIterator = lore.iterator();
 
@@ -65,12 +65,12 @@ public class QuestInfo {
 
         String levelTypes;
         while ((levelTypes = (loreIterator.next())).contains("Lv. Min:")) {
-            String[] parts = getTextWithoutFormattingCodes(levelTypes).split("\\s+");
+            String[] parts = stripFormatting(levelTypes).split("\\s+");
             QuestLevelType levelType = QuestLevelType.valueOf(parts[1].toUpperCase(Locale.ROOT));
             int minLevel = Integer.parseInt(parts[parts.length - 1]);
             minLevels.put(levelType, minLevel);
         }
-        size = QuestSize.valueOf(getTextWithoutFormattingCodes(levelTypes).replace("- Length: ", "").toUpperCase(Locale.ROOT));
+        size = QuestSize.valueOf(stripFormatting(levelTypes).replace("- Length: ", "").toUpperCase(Locale.ROOT));
 
         loreIterator.next();
         // flat description
@@ -85,7 +85,7 @@ public class QuestInfo {
                 descriptionBuilder.append(" ");
             }
 
-            descriptionBuilder.append(getTextWithoutFormattingCodes(description));
+            descriptionBuilder.append(stripFormatting(description));
         }
 
         description = descriptionBuilder.toString();

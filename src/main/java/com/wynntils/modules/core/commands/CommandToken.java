@@ -36,26 +36,26 @@ public class CommandToken extends CommandBase implements IClientCommand {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if (WebManager.getAccount().getToken() != null) {
             StringTextComponent text = new StringTextComponent("");
-            text.appendText("Wynntils Token ");
-            text.getStyle().setColor(TextFormatting.AQUA);
+            text.append("Wynntils Token ");
+            text.getStyle().withColor(TextFormatting.AQUA);
 
             StringTextComponent token = new StringTextComponent(WebManager.getAccount().getToken());
 
-            token.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+            token.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
                     "https://account.wynntils.com/register.php?token=" + WebManager.getAccount().getToken()));
-            token.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+            token.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     new StringTextComponent("Click me to register an account.")));
 
-            token.getStyle().setColor(TextFormatting.DARK_AQUA);
+            token.getStyle().withColor(TextFormatting.DARK_AQUA);
             token.getStyle().setUnderlined(true);
-            text.appendSibling(token);
+            text.append(token);
 
             sender.sendMessage(text);
             return;
         }
 
         StringTextComponent text = new StringTextComponent("Error when getting token, try restarting your client");
-        text.getStyle().setColor(TextFormatting.RED);
+        text.getStyle().withColor(TextFormatting.RED);
 
         sender.sendMessage(text);
     }

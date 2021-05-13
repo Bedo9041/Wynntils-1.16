@@ -55,7 +55,7 @@ public class UIETextBox extends UIEClickZone {
         }
     }
 
-    public void setColor(int color) {
+    public void withColor(int color) {
         textField.setTextColor(color);
     }
 

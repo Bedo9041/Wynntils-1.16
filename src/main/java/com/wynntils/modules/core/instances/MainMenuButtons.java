@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.core.instances;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.rendering.textures.Textures;
 import com.wynntils.core.utils.ServerUtils;
@@ -14,14 +15,13 @@ import com.wynntils.modules.utilities.instances.ServerIcon;
 import com.wynntils.webapi.WebManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public class MainMenuButtons {
 
     private static void clickedWynncraftButton(Minecraft mc, ServerData server, Screen backGui) {
         if (hasUpdate()) {
-            mc.displayGuiScreen(new UpdateAvailableScreen(server));
+            mc.setScreen(new UpdateAvailableScreen(server));
         } else {
             WebManager.skipJoinUpdate();
             ServerUtils.connect(backGui, server);
@@ -136,7 +136,7 @@ public class MainMenuButtons {
         }
 
         @Override
-        public void initGui() {
+        public void init() {
             doAction();
         }
 

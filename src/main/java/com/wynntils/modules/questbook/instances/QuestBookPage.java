@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.questbook.instances;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.enums.wynntils.WynntilsSound;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
@@ -19,9 +20,8 @@ import com.wynntils.modules.questbook.configs.QuestBookConfig;
 import com.wynntils.modules.questbook.enums.QuestBookPages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiPageButtonList;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.GuiTextField;
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Mouse;
@@ -82,7 +82,7 @@ public class QuestBookPage extends Screen {
      * Resets all basic information needed for various features on all pages
      */
     @Override
-    public void initGui() {
+    public void init() {
         if (open) {
             if (!showSearchBar) return;
 
@@ -273,7 +273,7 @@ public class QuestBookPage extends Screen {
         this.showAnimation = showAnimation;
 
         if (showAnimation) WynntilsSound.QUESTBOOK_OPENING.play(); // sfx
-        Minecraft.getInstance().displayGuiScreen(this);
+        Minecraft.getInstance().setScreen(this);
     }
 
     public void updateSearch() {

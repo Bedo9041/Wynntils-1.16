@@ -15,9 +15,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
-import net.minecraft.network.play.server.SPacketChat;
-import net.minecraft.network.play.server.SPacketTitle;
+import net.minecraft.network.play.client.CPlayerTryUseItemPacket;
+import net.minecraft.network.play.server.SChatPacket;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +31,7 @@ import static com.wynntils.core.framework.instances.data.SpellData.SPELL_RIGHT;
 public class QuickCastManager {
 
     private static final CPacketAnimation leftClick = new CPacketAnimation(EnumHand.MAIN_HAND);
-    private static final CPacketPlayerTryUseItem rightClick = new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND);
+    private static final CPlayerTryUseItemPacket rightClick = new CPlayerTryUseItemPacket(EnumHand.MAIN_HAND);
     private static final CPacketPlayerDigging releaseClick = new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN);
 
     private static final int[] spellUnlock = { 1, 11, 21, 31 };
@@ -41,7 +41,7 @@ public class QuickCastManager {
 
         int level = PlayerInfo.get(CharacterData.class).getLevel();
         boolean isLowLevel = level <= 11;
-        Class<?> packetClass = isLowLevel ? SPacketTitle.class : SPacketChat.class;
+        Class<?> packetClass = isLowLevel ? STitlePacket.class : SChatPacket.class;
         PacketQueue.queueComplexPacket(a == SPELL_LEFT ? leftClick : rightClick, packetClass, e -> checkKey(e, 0, a, isLowLevel));
         PacketQueue.queueComplexPacket(b == SPELL_LEFT ? leftClick : rightClick, packetClass, e -> checkKey(e, 1, b, isLowLevel));
         PacketQueue.queueComplexPacket(c == SPELL_LEFT ? leftClick : rightClick, packetClass, e -> checkKey(e, 2, c, isLowLevel));
@@ -103,15 +103,15 @@ public class QuickCastManager {
 
         SpellData data = PlayerInfo.get(SpellData.class);
         if (isLowLevel) {
-            SPacketTitle title = (SPacketTitle) input;
-            if (title.getType() != SPacketTitle.Type.SUBTITLE) return false;
+            STitlePacket title = (STitlePacket) input;
+            if (title.getType() != STitlePacket.Type.SUBTITLE) return false;
 
             spell = data.parseSpellFromTitle(title.getMessage().getFormattedText());
         } else {
-            SPacketChat title = (SPacketChat) input;
+            SChatPacket title = (SChatPacket) input;
             if (title.getType() != ChatType.GAME_INFO) return false;
 
-            PlayerInfo.get(ActionBarData.class).updateActionBar(title.getChatComponent().getUnformattedText());
+            PlayerInfo.get(ActionBarData.class).updateActionBar(title.getChatComponent().getString());
 
             spell = data.getLastSpell();
         }

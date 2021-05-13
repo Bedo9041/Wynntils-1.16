@@ -17,25 +17,19 @@ import com.wynntils.modules.map.instances.PathWaypointProfile;
 import com.wynntils.modules.map.overlays.objects.MapIcon;
 import com.wynntils.modules.map.overlays.objects.MapPathWaypointIcon;
 import com.wynntils.modules.map.rendering.PointRenderer;
-
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class LootRunManager {
 
     private static final Gson GSON = new GsonBuilder()
         .setPrettyPrinting()
-        .registerTypeHierarchyAdapter(Vec3i.class, new BlockPosSerializer())
+        .registerTypeHierarchyAdapter(Vector3i.class, new BlockPosSerializer())
         .create();
     public static final File STORAGE_FOLDER = new File(Reference.MOD_STORAGE_ROOT, "lootruns");
 
@@ -329,7 +323,7 @@ public class LootRunManager {
         }
     }
 
-    private static class BlockPosSerializer implements JsonSerializer<Vec3i>, JsonDeserializer<Vec3i> {
+    private static class BlockPosSerializer implements JsonSerializer<Vector3i>, JsonDeserializer<Vector3i> {
         private static final String srg_x = "field_177962_a";
         private static final String srg_y = "field_177960_b";
         private static final String srg_z = "field_177961_c";
@@ -344,7 +338,7 @@ public class LootRunManager {
         }
 
         @Override
-        public JsonElement serialize(Vec3i src, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(Vector3i src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject o = new JsonObject();
             o.addProperty("x", src.getX());
             o.addProperty("y", src.getY());

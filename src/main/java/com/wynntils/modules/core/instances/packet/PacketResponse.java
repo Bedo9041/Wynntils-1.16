@@ -69,7 +69,7 @@ public class PacketResponse {
         return verification == null || verification.apply(packetType);
     }
 
-    public void sendPacket() {
+    public void send() {
         if (skipping || !shouldSend()) return;
 
         Utils.runAsync(() -> {
@@ -77,7 +77,7 @@ public class PacketResponse {
             if (this.sender != null) {
                 this.sender.accept(conn, input);
             } else {
-                conn.sendPacket(input);
+                conn.send(input);
             }
             lastSent = System.currentTimeMillis();
             tries++;
@@ -101,7 +101,7 @@ public class PacketResponse {
 
     /**
      * Called to send packet with the current connection and the packet that was queued.
-     * Default implementation is `(conn, pack) -> conn.sendPacket(pack)`.
+     * Default implementation is `(conn, pack) -> conn.send(pack)`.
      *
      * Can be used to change the packet sent depending on the outcome of previous packets.
      */

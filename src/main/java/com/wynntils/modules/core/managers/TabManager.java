@@ -9,7 +9,7 @@ import com.wynntils.Reference;
 import com.wynntils.core.utils.StringUtils;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
 
 import java.util.Arrays;
 import java.util.List;

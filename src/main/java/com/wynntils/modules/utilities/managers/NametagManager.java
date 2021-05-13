@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.utilities.managers;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.wynntils.Reference;
 import com.wynntils.core.framework.enums.professions.ProfessionType;
 import com.wynntils.core.framework.instances.PlayerInfo;
@@ -28,14 +29,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.text.TextFormatting;
@@ -319,7 +319,7 @@ public class NametagManager {
 
         for (ItemStack is : player.getEquipmentAndArmor()) {
             if (!is.hasCustomHoverName()) continue;
-            String itemName = WebManager.getTranslatedItemName(TextFormatting.getTextWithoutFormattingCodes(is.getDisplayName())).replace("֎", "");
+            String itemName = WebManager.getTranslatedItemName(TextFormatting.stripFormatting(is.getDisplayName())).replace("֎", "");
 
             CustomColor color;
             String displayName;
@@ -338,7 +338,7 @@ public class NametagManager {
                 displayName = itemName;
             } else continue;
 
-            labels.add(new NametagLabel(color, TextFormatting.getTextWithoutFormattingCodes(displayName), 0.4f));
+            labels.add(new NametagLabel(color, TextFormatting.stripFormatting(displayName), 0.4f));
         }
 
         return labels;

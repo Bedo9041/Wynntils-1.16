@@ -4,7 +4,7 @@
 
 package com.wynntils.modules.core.managers;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
@@ -55,7 +55,7 @@ public class PlayerEntityManager {
 
     private static class Listener implements IWorldEventListener {
 
-        @Override public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) { }
+        @Override public void notifyBlockUpdate(World worldIn, BlockPos pos, BlockState oldState, BlockState newState, int flags) { }
         @Override public void notifyLightSet(BlockPos pos) { }
         @Override public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) { }
         @Override public void playSoundToAllNearExcept(@Nullable PlayerEntity player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch) { }

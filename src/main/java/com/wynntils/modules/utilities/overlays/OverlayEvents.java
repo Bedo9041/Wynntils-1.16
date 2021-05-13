@@ -23,22 +23,21 @@ import com.wynntils.webapi.profiles.item.enums.ItemTier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.network.play.server.*;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
@@ -67,7 +66,7 @@ public class OverlayEvents implements Listener {
     }
 
     @SubscribeEvent
-    public void onTitle(PacketEvent<SPacketTitle> e) {
+    public void onTitle(PacketEvent<STitlePacket> e) {
         WarTimerOverlay.onTitle(e);
     }
 
@@ -155,7 +154,7 @@ public class OverlayEvents implements Listener {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onScrollUsed(ChatEvent.Post e) {
-        String messageText = e.getMessage().getUnformattedText();
+        String messageText = e.getMessage().getString();
         if (messageText.matches(".*? for [0-9]* seconds\\]")) { //consumable message
             //10 tick delay, since chat event occurs before default consumable event
             new Delay(() -> ConsumableTimerOverlay.addExternalScroll(messageText), 10);
@@ -169,13 +168,13 @@ public class OverlayEvents implements Listener {
             return;
         }
 
-        if (!Reference.onWorld || e.getMessage().getUnformattedText().equals(" ")) return;
-        String messageText = e.getMessage().getUnformattedText();
+        if (!Reference.onWorld || e.getMessage().getString().equals(" ")) return;
+        String messageText = e.getMessage().getString();
         String formattedText = e.getMessage().getFormattedText();
         if (messageText.split(" ")[0].matches("\\[\\d+:\\d+\\]")) {
             if (!wynnExpTimestampNotified) {
                 StringTextComponent text = new StringTextComponent("[" + Reference.NAME + "] WynnExpansion's chat timestamps detected, please use " + Reference.NAME + "' chat timestamps for full compatibility.");
-                text.getStyle().setColor(DARK_RED);
+                text.getStyle().withColor(DARK_RED);
                 Minecraft.getInstance().player.sendMessage(text);
                 wynnExpTimestampNotified = true;
             }
@@ -770,7 +769,7 @@ public class OverlayEvents implements Listener {
         if (!Reference.onWorld || !OverlayConfig.ConsumableTimer.INSTANCE.showSpellEffects) return;
 
         SPacketEntityEffect effect = e.getPacket();
-        if (effect.getEntityId() != Minecraft.getInstance().player.getEntityId()) return;
+        if (effect.getId() != Minecraft.getInstance().player.getId()) return;
 
         Potion potion = Potion.getPotionById(effect.getEffectId());
 
@@ -817,7 +816,7 @@ public class OverlayEvents implements Listener {
         if (!Reference.onWorld || !OverlayConfig.ConsumableTimer.INSTANCE.showSpellEffects) return;
 
         SPacketRemoveEntityEffect effect = e.getPacket();
-        if (effect.getEntity(Minecraft.getInstance().world) != Minecraft.getInstance().player) return;
+        if (effect.getEntity(Minecraft.getInstance().level) != Minecraft.getInstance().player) return;
 
         Minecraft.getInstance().submit(() -> {
             Potion potion = effect.getPotion();

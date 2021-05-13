@@ -45,7 +45,7 @@ public class LootRunPath {
 
         if (chests != null) {
             for (BlockPos pos : chests) {
-                this.chests.add(pos.toImmutable());
+                this.chests.add(pos.immutable());
             }
         }
         if (notes != null) {
@@ -84,7 +84,7 @@ public class LootRunPath {
     }
 
     public void addChest(BlockPos loc) {
-        chests.add(loc.toImmutable());
+        chests.add(loc.immutable());
     }
 
     public void removeChest(BlockPos loc) {

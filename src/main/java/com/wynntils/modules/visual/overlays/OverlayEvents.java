@@ -20,7 +20,7 @@ public class OverlayEvents implements Listener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void initClassMenu(GuiOverlapEvent.ChestOverlap.InitGui e) {
         if (!VisualConfig.CharacterSelector.INSTANCE.enabled) return;
-        if (!e.getGui().getLowerInv().getName().contains("Select a Class")) return;
+        if (!e.getGui().getTitle().getString().contains("Select a Class")) return;
 
         WindowedResolution res = new WindowedResolution(480, 254);
         fakeCharacterSelector = new CharacterSelectorUI(null, e.getGui(), res.getScaleFactor());
@@ -29,7 +29,7 @@ public class OverlayEvents implements Listener {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void closeCharacterMenu(GuiOverlapEvent.ChestOverlap.GuiClosed e) {
-        if (!e.getGui().getLowerInv().getName().contains("Select a Class")) return;
+        if (!e.getGui().getTitle().getString().contains("Select a Class")) return;
 
         fakeCharacterSelector = null;
     }

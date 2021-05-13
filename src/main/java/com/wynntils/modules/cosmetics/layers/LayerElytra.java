@@ -4,6 +4,7 @@
 
 package com.wynntils.modules.cosmetics.layers;
 
+import com.mojang.blaze3d.platform.GlStateManager.*;
 import com.wynntils.ModCore;
 import com.wynntils.modules.core.instances.account.WynntilsUser;
 import com.wynntils.modules.core.managers.UserManager;
@@ -12,8 +13,6 @@ import com.wynntils.modules.cosmetics.layers.models.CustomElytraModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -74,9 +73,9 @@ public class LayerElytra extends ModelBase implements LayerRenderer<AbstractClie
         { _pushMatrix();
             translate(0.0F, 0.0F, 0.125F);
 
-            double d0 = player.prevChasingPosX + (player.chasingPosX - player.prevChasingPosX) * (double) partialTicks - (player.prevPosX + (player.posX - player.prevPosX) * (double) partialTicks);
-            double d1 = player.prevChasingPosY + (player.chasingPosY - player.prevChasingPosY) * (double) partialTicks - (player.prevPosY + (player.posY - player.prevPosY) * (double) partialTicks);
-            double d2 = player.prevChasingPosZ + (player.chasingPosZ - player.prevChasingPosZ) * (double) partialTicks - (player.prevPosZ + (player.posZ - player.prevPosZ) * (double) partialTicks);
+            double d0 = player.prevChasingPosX + (player.chasingPosX - player.prevChasingPosX) * (double) partialTicks - (player.prevPosX + (player.getX() - player.prevPosX) * (double) partialTicks);
+            double d1 = player.prevChasingPosY + (player.chasingPosY - player.prevChasingPosY) * (double) partialTicks - (player.prevPosY + (player.getY() - player.prevPosY) * (double) partialTicks);
+            double d2 = player.prevChasingPosZ + (player.chasingPosZ - player.prevChasingPosZ) * (double) partialTicks - (player.prevPosZ + (player.getZ() - player.prevPosZ) * (double) partialTicks);
             float f = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
             double d3 = MathHelper.sin(f * 0.017453292F);
             double d4 = -MathHelper.cos(f * 0.017453292F);

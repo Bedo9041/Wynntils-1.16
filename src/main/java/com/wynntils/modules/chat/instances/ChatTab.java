@@ -9,7 +9,6 @@ import net.minecraft.client.gui.ChatLine;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -102,7 +101,7 @@ public class ChatTab implements Comparable<ChatTab> {
     }
 
     public void addMessage(ChatLine msg) {
-        if (msg.getChatLineID() == 0) {
+        if (msg.getId() == 0) { // TODO: Look into once working
             hasNewMessages = true;
         }
         currentMessages.add(0, msg);
